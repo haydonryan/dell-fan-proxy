@@ -2,23 +2,24 @@
 //
 //
 
-const int fanControlPin = 9;
+const int fanPWMControlPin = 9;
+const int fanTachPin = 2;
 int count = 0;
 unsigned long startTime;
 int rpm;
 
 void setup() {
-TCCR1A = 0;
-TCCR1B = 0;   // reset adruino core library config
-TCNT1 = 0;  //reset timer
+TCCR1A = 0;  // Set Timer/ Counter Control Registers
+TCCR1B = 0;  // reset adruino core library config
+TCNT1 = 0;   //reset timer
 TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11) ;
 TCCR1B = _BV(WGM13) | _BV(CS10); //for pins 9 and 10
 ICR1= 320;
-pinMode(fanControlPin, OUTPUT);
+pinMode(fanPWMControlPin, OUTPUT);
 OCR1A = 0;
 OCR1B = 0;
 Serial.begin(9600);
-attachInterrupt(digitalPinToInterrupt(2), counter, RISING); // yellow wire
+attachInterrupt(digitalPinToInterrupt(fanTachPin), counter, RISING); // yellow wire
 }
 
 
@@ -35,7 +36,7 @@ int pwm=160;
   Serial.print("PWM = ");
   Serial.print(map(pwm,0,320,0,100));
   Serial.print("%, Speed = ");
-   Serial.print(count);
+  Serial.print(count);
   Serial.print(" count ");    
   Serial.print(rpm);
   Serial.println(" rpm");    
