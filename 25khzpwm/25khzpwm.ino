@@ -38,14 +38,17 @@ const unsigned int max_rpm = 320;
 // Main datastructure for storing fan variables
 const unsigned int NUMBER_OF_FANS = 6;
 
-typedef struct fan_variable_structure {
-  unsigned long idrac_percent_request;          // Read: what fan speed is idrac requesting
-  unsigned long idrac_rpm;
+struct fan_variable_structure {
+  unsigned int idrac_pwn_percent_request;          // Read: what fan speed is idrac requesting
+  unsigned int idrac_rpm;
+
   
   unsigned long idrac_tach_increment;           // Var: the increment used for timing how often we need to pulse
   unsigned long idrac_start_time_micros;        // Var: last tick start time
   bool idrac_tach_open_drain_toggle;            // Var: state of open drain
 
+
+  unsigned int fan_pwm_percent;                // Write: output of the fan map that we send to the real fan
   unsigned int  fan_rpm;                        // Read: current RPM of the fan
   unsigned int  fan_rpm_interrupt_count = 0;    // Var: how many interrupts do we get on the fan_tach_pin_input fan per cycle
 
@@ -55,9 +58,10 @@ typedef struct fan_variable_structure {
 
 fan_variable_structure fan[NUMBER_OF_FANS];
 
-
+///////////////////////////////////////////////////////////////////////////
 // Helper function to perform the fan curve mapping.
 // Uses linear algebra to calcaulate points between control points
+///////////////////////////////////////////////////////////////////////////
 unsigned int map_fan_curve_pwm_based_on_input_pwm (unsigned int input_pwm ) {
 
   if (input_pwm > 100 ) input_pwm = 100;
@@ -110,56 +114,46 @@ void setup() {
   unsigned long freq;
   freq = 600 / 60L * 100 / 96;                              // 17k gives 16160 in bios 20k gives 19218 ~ 4-5% error
   fan[0].idrac_tach_increment = 1000000L / (4 * freq)  ; // two pulses a second = 4 edges dumbass
+  
+  fan[0].fan_pwm_percent=60;
    
   startTime = millis();
   fan[0].idrac_start_time_micros = micros();
 }
 
 void loop() {
-  int pwm = 60;
+  
   unsigned long duration;
 
-  OCR1A = pwm;
+  OCR1A = fan[0].fan_pwm_percent*320 / 100;
 
   unsigned long current_time_in_micros = micros();
 
+  //////////////////////////////////////////////////////
+  // Toggle open drain based on the desired frequency
+  // 
   duration = (current_time_in_micros - fan[0].idrac_start_time_micros);
   if ( duration > fan[0].idrac_tach_increment) {  // toggle based on rpm
-    /*Serial.print(" fan[0].idrac_tach_increment = ");
-
-      Serial.print(" fan[0].idrac_start_time_micros = ");
-      Serial.print(fan[0].idrac_start_time_micros);
-      Serial.print(" micros = ");
-      Serial.print(current_time_in_micros);
-      Serial.print(" sub = ");
-      Serial.println((current_time_in_micros - fan[0].idrac_start_time_micros));
-    */
     fan[0].idrac_start_time_micros = current_time_in_micros;
     fan[0].idrac_tach_open_drain_toggle = !fan[0].idrac_tach_open_drain_toggle;
     openDrain(computer_tach_output, fan[0].idrac_tach_open_drain_toggle);
-
-
   }
 
 
-
+  //////////////////////////////////////////////////////
+  // Once per second read the fan speed and print stats
+  // 
   if ((duration = millis() - startTime) > 1000) {  // update once per second
    
-    fan[0].idrac_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input);
+    fan[0].idrac_pwn_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input);
+    fan[0].fan_rpm = pulses_per_time_to_rpm( fan[0].fan_rpm_interrupt_count, duration);
     
-    fan[0].fan_rpm = fan[0].fan_rpm_interrupt_count * 30;
-    int temp = pulses_per_time_to_rpm( fan[0].fan_rpm_interrupt_count, duration);
+    fan[0].idrac_rpm =  fan[0].fan_rpm ;                              // pass through fan RPM.
+    fan[0].fan_pwm_percent =  fan[0].idrac_pwn_percent_request;       // pass through pwm to fan
     
-    Serial.print("fan[0].fan_rpm="); Serial.print(fan[0].fan_rpm);
-    Serial.print(" , "); Serial.println(temp);
 
     if (loopcounter % 2) {              // only display stats every 2 seconds
-      Serial.print("PWM = ");
-      Serial.print(map(pwm, 0, 320, 0, 100));
-
-      
-      Serial.print(" loop_counter = ");
-      Serial.println(loopcounter);
+      print_fan_statistics();
     }
 
     startTime = millis();
@@ -189,15 +183,17 @@ unsigned int read_idrac_pwm_value_in_percentage (unsigned int pin) {
     percent = (100 * high_duration) / (low_duration + high_duration);
     if (percent > 100) percent=100;
 
-    Serial.println();
-    Serial.print(" highduration = ");
-    Serial.println(high_duration);
-
-    Serial.print(" low duration = ");
-    Serial.println(low_duration);
-
-    Serial.print(" % = ");
-    Serial.println(percent);
+    if(0) {  // debug flag
+      Serial.println();
+      Serial.print(" highduration = ");
+      Serial.println(high_duration);
+  
+      Serial.print(" low duration = ");
+      Serial.println(low_duration);
+  
+      Serial.print(" % = ");
+      Serial.println(percent);
+     }
     return percent;
 }
 
@@ -213,19 +209,16 @@ void openDrain(byte pin, bool value)
 
 
 void print_fan_statistics() {
-char buffer[32];
-
-Serial.print("%, Speed = (");
-      Serial.print(fan[0].fan_rpm_interrupt_count);
-      Serial.print(" count ");
-      Serial.print(fan[0].fan_rpm);
-      Serial.print(" rpm )");
-      return;
-Serial.println(" Fan #   IDRAC: ");
+  char buffer[256];
+  
   for (int i=0; i< NUMBER_OF_FANS; i++) {
-    sprintf(buffer, "Fan [%d] idrac: %d%% ", i,  i);
+    sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwn_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     Serial.println(buffer);
-  }
+
+  }  
+  Serial.println();
+
+  return;
 }
 
 // notes: default Falcon CPU speed 27% PWM
