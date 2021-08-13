@@ -1,8 +1,9 @@
-//////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 //
 // Dell Fan Proxy
 //
 //
+///////////////////////////////////////////////////////////////////////////
 
 // Pins to communiate with fan.
 const int fan_pwm_pin_output = 9;     // Blue Wire
@@ -12,10 +13,12 @@ const int fan_tach_pin_input = 2;     // Yellow Wire
 const int computer_pwm_input = 10;     // using pin10 since it's paired with pin 9 for TCCR1B
 const int computer_tach_output = 12;   // update
 
+///////////////////////////////////////////////////////////////////////////
 // Fan speed map
 // Modify the numbers in the fan_curve_map to change the points of the fan curve.
 // The first value in each map determines where the fan speed is defined - eg if we read in that value it will output the second value.
 // Strongly recommend - do not modify the first and last points unless you fully understand what you're doing.
+///////////////////////////////////////////////////////////////////////////
 
 const unsigned int FAN_MAP_POINTS = 5; // MIN 3 points
 
@@ -26,6 +29,8 @@ unsigned int fan_curve_map[FAN_MAP_POINTS][2] =
   {80, 40},
   {100, 100} // leave as {100,100}
 };
+
+///////////////////////////////////////////////////////////////////////////
 
 // Loop variables
 unsigned long startTime;
@@ -39,21 +44,16 @@ const unsigned int max_rpm = 320;
 const unsigned int NUMBER_OF_FANS = 6;
 
 struct fan_variable_structure {
-  unsigned int idrac_pwn_percent_request;          // Read: what fan speed is idrac requesting
-  unsigned int idrac_rpm;
-
+  unsigned int idrac_pwn_percent_request;       // Read: what fan speed is idrac requesting
+  unsigned int idrac_rpm;                       // Var: desired rpm to generate for idrac
   
   unsigned long idrac_tach_increment;           // Var: the increment used for timing how often we need to pulse
   unsigned long idrac_start_time_micros;        // Var: last tick start time
   bool idrac_tach_open_drain_toggle;            // Var: state of open drain
 
-
-  unsigned int fan_pwm_percent;                // Write: output of the fan map that we send to the real fan
+  unsigned int fan_pwm_percent;                 // Write: output of the fan map that we send to the real fan
   unsigned int  fan_rpm;                        // Read: current RPM of the fan
   unsigned int  fan_rpm_interrupt_count = 0;    // Var: how many interrupts do we get on the fan_tach_pin_input fan per cycle
-
-  
-  
 };
 
 fan_variable_structure fan[NUMBER_OF_FANS];
@@ -85,14 +85,18 @@ unsigned int map_fan_curve_pwm_based_on_input_pwm (unsigned int input_pwm ) {
 }
 
 unsigned int calculate_idrac_tach_pwm_based_on_actual_fan_pwm (unsigned int input_rpm ) {
-// Fake RPM
+  // Fake RPM
   // max we are likely to see is ~ 650HZ
   unsigned long rpm;
   rpm = input_rpm / 60L * 100 / 96;                              // 17k gives 16160 in bios 20k gives 19218 ~ 4-5% error
   return (1000000L / (4 * rpm))  ; // two pulses a second = 4 edges dumbass
 }
 
-  
+///////////////////////////////////////////////////////////////////////////
+//
+//  SETUP
+// 
+///////////////////////////////////////////////////////////////////////////
 
 
 void setup() {
@@ -120,6 +124,12 @@ void setup() {
   startTime = millis();
   fan[0].idrac_start_time_micros = micros();
 }
+
+///////////////////////////////////////////////////////////////////////////
+//
+//  LOOP
+// 
+///////////////////////////////////////////////////////////////////////////
 
 void loop() {
   
@@ -150,11 +160,11 @@ void loop() {
     // Measure Fan RPM
     fan[0].fan_rpm = pulses_per_time_to_rpm( fan[0].fan_rpm_interrupt_count, duration);
     
-   
-    fan[0].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[0].idrac_pwn_percent_request); // map through requestd pwm via map to fan
+    // Map idrac PWM % request to what we want fan PWM % to be
+    fan[0].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[0].idrac_pwn_percent_request);
     OCR1A = fan[0].fan_pwm_percent*320 / 100;
 
-      
+    // Update RPM and tach that we want to generate for idrac
     fan[0].idrac_rpm =  fan[0].fan_rpm ;                                                                // pass through fan RPM. 
     fan[0].idrac_tach_increment= calculate_idrac_tach_pwm_based_on_actual_fan_pwm(fan[0].idrac_rpm);    // calculate tach increment for desired fanspeed.      
     fan[0].idrac_start_time_micros = micros();                                                          // reset tach timer
