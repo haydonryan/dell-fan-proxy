@@ -20,9 +20,6 @@ unsigned int loopcounter = 0;
 const unsigned int min_rpm = 30; // Fan still runs at 30, but 60 would be better for more airflow.
 const unsigned int max_rpm = 320;
 
-unsigned int rpm_interrupt_count = 0;
-unsigned int rpm;
-
 const unsigned int NUMBER_OF_FANS = 6;
 
 typedef struct fan_variable_structure {
@@ -144,7 +141,7 @@ void loop() {
 
 
 
-  if ((duration = millis() - startTime) > 1000) {  // update RPM once per second
+  if ((duration = millis() - startTime) > 1000) {  // update once per second
     high_duration = pulseIn(computer_pwm_input, HIGH, 400);
     low_duration = pulseIn(computer_pwm_input, LOW, 400);
     percent = (100 * high_duration) / (low_duration + high_duration);
@@ -184,9 +181,9 @@ void loop() {
     Serial.println(percent);
 
 
-    rpm = rpm_interrupt_count * 30;
-    int temp = pulses_per_time_to_rpm( rpm_interrupt_count, duration);
-    Serial.print("rpm="); Serial.print(rpm);
+    fan[0].fan_rpm = fan[0].fan_rpm_interrupt_count * 30;
+    int temp = pulses_per_time_to_rpm( fan[0].fan_rpm_interrupt_count, duration);
+    Serial.print("fan[0].fan_rpm="); Serial.print(fan[0].fan_rpm);
     Serial.print(" , "); Serial.println(temp);
 
     if (loopcounter % 2) {              // only display stats every 2 seconds
@@ -194,23 +191,23 @@ void loop() {
       Serial.print(map(pwm, 0, 320, 0, 100));
 
       Serial.print("%, Speed = (");
-      Serial.print(rpm_interrupt_count);
+      Serial.print(fan[0].fan_rpm_interrupt_count);
       Serial.print(" count ");
-      Serial.print(rpm);
+      Serial.print(fan[0].fan_rpm);
       Serial.print(" rpm )");
       Serial.print(" loop_counter = ");
       Serial.println(loopcounter);
     }
 
     startTime = millis();
-    rpm_interrupt_count = 0;
+    fan[0].fan_rpm_interrupt_count = 0;
   }
 
   ++loopcounter;
 }
 
 void counter() {
-  rpm_interrupt_count++;
+  fan[0].fan_rpm_interrupt_count++;
 }
 
 // pulses occur twice every rotation
