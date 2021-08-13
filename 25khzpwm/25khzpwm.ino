@@ -32,7 +32,7 @@ typedef struct fan_variable_structure {
   unsigned long idrac_tach_increment;           // Var: the increment used for timing how often we need to pulse
   unsigned long idrac_start_time_micros;        // Var: last tick start time
 
-  unsigned long fan_rpm;                        // Read: current RPM of the fan
+  unsigned int  fan_rpm;                        // Read: current RPM of the fan
   unsigned int  fan_rpm_interrupt_count = 0;    // Var: how many interrupts do we get on the fan_tach_pin_input fan per cycle
 
   
