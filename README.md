@@ -120,7 +120,8 @@ There are different ways of reading the PWM signal from the computer. Because PW
 18000rpm = 300rps. Two ticks per rotation, gives 600hz
 Max fan speeds at 100%  (tested in idrac) 16920, 16920, 16800, 17040,16920 rpm
 
-
+# Possible improvements
+It would be much safer to map the fan speed returned to idrac from the detected speed of the fan, not the requested rpm. That way if a fan fails, then idrac will throw a fault.
 
 # Resources:
 Starting point: https://www.youtube.com/watch?v=UJK2JF8wOu8
