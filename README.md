@@ -97,3 +97,41 @@ Low pass filter
 Using just a 220 k ohm resister from the signal made the difference ( no capacitor)
 https://forum.arduino.cc/t/controlling-12v-pwm-fan-reading-speed-tach-readout-issues/863076
 
+## August 4 2021
+Did some more research last night on continuing the project.  Found this forum thread: https://forum.arduino.cc/t/problem-measuring-4-pin-fan-rpm/666804/10.
+
+Also realized that I need to refactor the RPM sensing code as it loops and waits for the Tach count to go up - that's not helpful for also trying to output a tach signal back to the computer.  The tach output (when pulled up) is a nice square wave
+
+
+## August 10 2021
+removing the existing wiring from the arduino so I can test PWM input from the computer.
+arduino -> breadboard
+ground (orange) -> ground line
+5v (brown) -> resistor
+
+arduino -> fan
+pin 9 blue
+
+arduino -> resistor
+pin 2 - purple 
+
+There are different ways of reading the PWM signal from the computer. Because PWM is 25khz and in theory shouldn't change often - doing a blocking pulseIn seems to be ok.  This way we avoid using interrupts that we're using for checking the fan RPM.  
+
+18000rpm = 300rps. Two ticks per rotation, gives 600hz
+Max fan speeds at 100%  (tested in idrac) 16920, 16920, 16800, 17040,16920 rpm
+
+
+
+# Resources:
+Starting point: https://www.youtube.com/watch?v=UJK2JF8wOu8
+Replacement Fan: https://www.itcreations.com/product/119156
+Standard 4 pin fan pinout https://allpinouts.org/pinouts/connectors/motherboards/motherboard-cpu-4-pin-fan/
+https://pastebin.com/s49SWw1A
+https://github.com/Max-Sum/HP-fan-proxy/blob/master/hp_fan.ino
+https://www.avdweb.nl/arduino/misc/handy-functions
+https://www.reddit.com/r/homelab/comments/8wbogx/my_attempt_at_creating_a_circuit_board_that/
+https://www.reddit.com/r/homelab/comments/beuks5/silencing_the_hp_dl380_for_good/
+
+Setting the interrupt priority: https://www.youtube.com/watch?v=H3o08WE0zEI
+
+
