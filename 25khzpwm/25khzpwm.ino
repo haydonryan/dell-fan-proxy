@@ -42,9 +42,6 @@ typedef struct fan_variable_structure {
 fan_variable_structure fan[NUMBER_OF_FANS];
 
 
-
-unsigned long startTimeMicros;
-
 const unsigned int FAN_MAP_POINTS = 5; // MIN 3 points
 
 unsigned int fan_curve_map[FAN_MAP_POINTS][2] =
@@ -109,7 +106,7 @@ void setup() {
   fan[0].idrac_tach_increment = 1000000L / (4 * freq)  ; // two pulses a second = 4 edges dumbass
    
   startTime = millis();
-  startTimeMicros = micros();
+  fan[0].idrac_start_time_micros = micros();
 }
 
 bool toggle;
@@ -127,18 +124,18 @@ void loop() {
   unsigned long current_time_in_micros = micros();
 
 
-  duration = (current_time_in_micros - startTimeMicros);
+  duration = (current_time_in_micros - fan[0].idrac_start_time_micros);
   if ( duration > fan[0].idrac_tach_increment) {  // toggle based on rpm
     /*Serial.print(" fan[0].idrac_tach_increment = ");
 
-      Serial.print(" startTimeMicros = ");
-      Serial.print(startTimeMicros);
+      Serial.print(" fan[0].idrac_start_time_micros = ");
+      Serial.print(fan[0].idrac_start_time_micros);
       Serial.print(" micros = ");
       Serial.print(current_time_in_micros);
       Serial.print(" sub = ");
-      Serial.println((current_time_in_micros - startTimeMicros));
+      Serial.println((current_time_in_micros - fan[0].idrac_start_time_micros));
     */
-    startTimeMicros = current_time_in_micros;
+    fan[0].idrac_start_time_micros = current_time_in_micros;
     toggle = !toggle;
     openDrain(computer_tach_output, toggle);
 
