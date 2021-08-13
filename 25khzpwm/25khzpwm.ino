@@ -12,6 +12,21 @@ const int fan_tach_pin_input = 2;     // Yellow Wire
 const int computer_pwm_input = 10;     // using pin10 since it's paired with pin 9 for TCCR1B
 const int computer_tach_output = 12;   // update
 
+// Fan speed map
+// Modify the numbers in the fan_curve_map to change the points of the fan curve.
+// The first value in each map determines where the fan speed is defined - eg if we read in that value it will output the second value.
+// Strongly recommend - do not modify the first and last points unless you fully understand what you're doing.
+
+const unsigned int FAN_MAP_POINTS = 5; // MIN 3 points
+
+unsigned int fan_curve_map[FAN_MAP_POINTS][2] =
+{ {0, 0},    // leave as {0,0}
+  {40, 20},
+  {50, 30},
+  {80, 40},
+  {100, 100} // leave as {100,100}
+};
+
 // Loop variables
 unsigned long startTime;
 unsigned int loopcounter = 0;
@@ -20,6 +35,7 @@ unsigned int loopcounter = 0;
 const unsigned int min_rpm = 30; // Fan still runs at 30, but 60 would be better for more airflow.
 const unsigned int max_rpm = 320;
 
+// Main datastructure for storing fan variables
 const unsigned int NUMBER_OF_FANS = 6;
 
 typedef struct fan_variable_structure {
@@ -39,16 +55,8 @@ typedef struct fan_variable_structure {
 fan_variable_structure fan[NUMBER_OF_FANS];
 
 
-const unsigned int FAN_MAP_POINTS = 5; // MIN 3 points
-
-unsigned int fan_curve_map[FAN_MAP_POINTS][2] =
-{ {0, 0},
-  {40, 20},
-  {50, 30},
-  {80, 40},
-  {100, 100}
-};
-
+// Helper function to perform the fan curve mapping.
+// Uses linear algebra to calcaulate points between control points
 unsigned int map_fan_curve_pwm_based_on_input_pwm (unsigned int input_pwm ) {
 
   if (input_pwm > 100 ) input_pwm = 100;
