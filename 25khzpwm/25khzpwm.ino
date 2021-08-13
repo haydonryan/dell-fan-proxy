@@ -106,11 +106,11 @@ void setup() {
   TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11) ;
   TCCR1B = _BV(WGM13) | _BV(CS10); //for pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
   ICR1 = 320;
-  //pinMode(fan_tach_pin_input, INPUT_PULLUP);   // use the internal 20k-50k pullup resistor https://www.arduino.cc/en/Tutorial/Foundations/DigitalPins
   pinMode(fan_pwm_pin_output, OUTPUT);
   OCR1A = 0;
   OCR1B = 0;
   Serial.begin(115200);
+
   attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input), counter, RISING); // yellow wire
   pinMode(computer_pwm_input, INPUT);
 
@@ -165,7 +165,7 @@ void loop() {
     OCR1A = fan[0].fan_pwm_percent*320 / 100;
 
     // Update RPM and tach that we want to generate for idrac
-    fan[0].idrac_rpm =  fan[0].fan_rpm ;                                                                // pass through fan RPM. 
+    fan[0].idrac_rpm = map_idrac_rpm_based_from_pwm(fan[0].idrac_pwn_percent_request);                  // pass through fan RPM. 
     fan[0].idrac_tach_increment= calculate_idrac_tach_pwm_based_on_actual_fan_pwm(fan[0].idrac_rpm);    // calculate tach increment for desired fanspeed.      
     fan[0].idrac_start_time_micros = micros();                                                          // reset tach timer
 
@@ -241,6 +241,28 @@ unsigned int rpm_map[MAX_RPM_MAP_POINTS][2] =
   {100, 17000} // leave as {100,100}
 };
 
+
+unsigned int map_idrac_rpm_based_from_pwm(unsigned int input_pwm ) {
+
+  if (input_pwm > 100 ) input_pwm = 100;
+
+  for (unsigned int i = 1; i < MAX_RPM_MAP_POINTS; i++) {
+    if ( rpm_map[i - 1][0] < input_pwm && input_pwm <= rpm_map[i][0] ) {
+      float fan_curve_base = i - 1;
+      float y, x;
+
+      y = (rpm_map[i][1] - rpm_map[i - 1][1]);
+      x = (rpm_map[i][0] - rpm_map[i - 1][0]);
+      float ratio = y / x;
+
+      return ( ( (input_pwm - rpm_map[i - 1][0] ) * ratio ) + rpm_map[i - 1][1] );
+
+    }
+  }
+
+
+  return rpm_map[MAX_RPM_MAP_POINTS - 1][1];    //default return RPMs for 100%
+}
 
 void print_fan_statistics() {
   char buffer[256];
