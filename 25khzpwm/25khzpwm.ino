@@ -1,10 +1,18 @@
+//////////////////////////////////////////////////////////////
+//
 // Dell Fan Proxy
 //
 //
 
-const int fanPWMControlPin = 9;
-const int fanTachPin = 2;
-int count = 0;
+// Pins to communiate with fan.
+const int fan_pwm_pin_output = 9;     // Blue Wire
+const int fan_tach_pin_input = 2;     // Yellow Wire
+
+// Pins to communicate back to computer.
+const int computer_pwm_input = 10;     // using pin10 since it's paired with pin 9 for TCCR1B
+const int computer_tach_output = 12;   // update
+
+// Loop variables
 unsigned long startTime;
 int rpm;
 
@@ -44,5 +52,5 @@ int pwm=160;
 }
 
 void counter() {
-  count++;
+  rpm_interrupt_count++;
 }
