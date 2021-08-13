@@ -113,7 +113,7 @@ void setup() {
   loopcounter = 0;
   Serial.println("Starting up...");
 
-  
+  OCR1A = fan[0].fan_pwm_percent*320 / 100;
   
   fan[0].fan_pwm_percent=60;
    
@@ -124,8 +124,6 @@ void setup() {
 void loop() {
   
   unsigned long duration;
-
-  OCR1A = fan[0].fan_pwm_percent*320 / 100;
 
   unsigned long current_time_in_micros = micros();
 
@@ -154,7 +152,7 @@ void loop() {
     
    
     fan[0].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[0].idrac_pwn_percent_request); // map through requestd pwm via map to fan
-
+    OCR1A = fan[0].fan_pwm_percent*320 / 100;
 
       
     fan[0].idrac_rpm =  fan[0].fan_rpm ;                                                                // pass through fan RPM. 
