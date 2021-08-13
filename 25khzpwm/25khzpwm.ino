@@ -121,11 +121,7 @@ void loop() {
 
   OCR1A = pwm;
 
-  unsigned long high_duration, low_duration, percent;
-
-
   unsigned long current_time_in_micros = micros();
-
 
   duration = (current_time_in_micros - fan[0].idrac_start_time_micros);
   if ( duration > fan[0].idrac_tach_increment) {  // toggle based on rpm
@@ -148,47 +144,12 @@ void loop() {
 
 
   if ((duration = millis() - startTime) > 1000) {  // update once per second
-    high_duration = pulseIn(computer_pwm_input, HIGH, 400);
-    low_duration = pulseIn(computer_pwm_input, LOW, 400);
-    percent = (100 * high_duration) / (low_duration + high_duration);
-
-    high_duration = pulseIn(computer_pwm_input, HIGH, 400);
-    low_duration = pulseIn(computer_pwm_input, LOW, 400);
-    percent = (100 * high_duration) / (low_duration + high_duration);
-
-    high_duration = pulseIn(computer_pwm_input, HIGH, 400);
-    low_duration = pulseIn(computer_pwm_input, LOW, 400);
-    percent = (100 * high_duration) / (low_duration + high_duration);
-
-
-    high_duration = pulseIn(computer_pwm_input, HIGH, 400);
-    low_duration = pulseIn(computer_pwm_input, LOW, 400);
-    percent = (100 * high_duration) / (low_duration + high_duration);
-
-    high_duration = pulseIn(computer_pwm_input, HIGH, 400);
-    low_duration = pulseIn(computer_pwm_input, LOW, 400);
-    percent = (100 * high_duration) / (low_duration + high_duration);
-
-
-    high_duration = pulseIn(computer_pwm_input, HIGH, 400);
-    low_duration = pulseIn(computer_pwm_input, LOW, 400);
-    percent = (100 * high_duration) / (low_duration + high_duration);
-
-
-
-    Serial.println();
-    Serial.print(" highduration = ");
-    Serial.println(high_duration);
-
-    Serial.print(" low duration = ");
-    Serial.println(low_duration);
-
-    Serial.print(" % = ");
-    Serial.println(percent);
-
-
+   
+    fan[0].idrac_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input);
+    
     fan[0].fan_rpm = fan[0].fan_rpm_interrupt_count * 30;
     int temp = pulses_per_time_to_rpm( fan[0].fan_rpm_interrupt_count, duration);
+    
     Serial.print("fan[0].fan_rpm="); Serial.print(fan[0].fan_rpm);
     Serial.print(" , "); Serial.println(temp);
 
@@ -196,11 +157,7 @@ void loop() {
       Serial.print("PWM = ");
       Serial.print(map(pwm, 0, 320, 0, 100));
 
-      Serial.print("%, Speed = (");
-      Serial.print(fan[0].fan_rpm_interrupt_count);
-      Serial.print(" count ");
-      Serial.print(fan[0].fan_rpm);
-      Serial.print(" rpm )");
+      
       Serial.print(" loop_counter = ");
       Serial.println(loopcounter);
     }
@@ -224,6 +181,26 @@ unsigned int pulses_per_time_to_rpm( unsigned long total_pulses, unsigned int du
 }
 
 
+unsigned int read_idrac_pwm_value_in_percentage (unsigned int pin) {
+   unsigned long high_duration, low_duration, percent;
+
+    high_duration = pulseIn(pin, HIGH, 400);
+    low_duration = pulseIn(pin, LOW, 400);
+    percent = (100 * high_duration) / (low_duration + high_duration);
+    if (percent > 100) percent=100;
+
+    Serial.println();
+    Serial.print(" highduration = ");
+    Serial.println(high_duration);
+
+    Serial.print(" low duration = ");
+    Serial.println(low_duration);
+
+    Serial.print(" % = ");
+    Serial.println(percent);
+    return percent;
+}
+
 void openDrain(byte pin, bool value)
 {
   if (value)
@@ -237,6 +214,13 @@ void openDrain(byte pin, bool value)
 
 void print_fan_statistics() {
 char buffer[32];
+
+Serial.print("%, Speed = (");
+      Serial.print(fan[0].fan_rpm_interrupt_count);
+      Serial.print(" count ");
+      Serial.print(fan[0].fan_rpm);
+      Serial.print(" rpm )");
+      return;
 Serial.println(" Fan #   IDRAC: ");
   for (int i=0; i< NUMBER_OF_FANS; i++) {
     sprintf(buffer, "Fan [%d] idrac: %d%% ", i,  i);
