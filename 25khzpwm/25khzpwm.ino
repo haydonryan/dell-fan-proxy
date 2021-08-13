@@ -225,6 +225,22 @@ void openDrain(byte pin, bool value)
   }
 }
 
+const unsigned int MAX_RPM_MAP_POINTS = 11; 
+
+unsigned int rpm_map[MAX_RPM_MAP_POINTS][2] =
+{ {0, 0},    // leave as {0,0}
+  {10, 2007},
+  {20, 4045},
+  {30, 6053},
+  {40, 8091},
+  {50, 10129},
+  {60, 12077},
+  {70, 14715},
+  {80, 16213},
+  {90, 16700},
+  {100, 17000} // leave as {100,100}
+};
+
 
 void print_fan_statistics() {
   char buffer[256];
