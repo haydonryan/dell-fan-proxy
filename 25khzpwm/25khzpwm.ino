@@ -44,6 +44,7 @@ typedef struct fan_variable_structure {
   
   unsigned long idrac_tach_increment;           // Var: the increment used for timing how often we need to pulse
   unsigned long idrac_start_time_micros;        // Var: last tick start time
+  bool idrac_tach_open_drain_toggle;            // Var: state of open drain
 
   unsigned int  fan_rpm;                        // Read: current RPM of the fan
   unsigned int  fan_rpm_interrupt_count = 0;    // Var: how many interrupts do we get on the fan_tach_pin_input fan per cycle
@@ -114,9 +115,6 @@ void setup() {
   fan[0].idrac_start_time_micros = micros();
 }
 
-bool toggle;
-
-
 void loop() {
   int pwm = 60;
   unsigned long duration;
@@ -141,8 +139,8 @@ void loop() {
       Serial.println((current_time_in_micros - fan[0].idrac_start_time_micros));
     */
     fan[0].idrac_start_time_micros = current_time_in_micros;
-    toggle = !toggle;
-    openDrain(computer_tach_output, toggle);
+    fan[0].idrac_tach_open_drain_toggle = !fan[0].idrac_tach_open_drain_toggle;
+    openDrain(computer_tach_output, fan[0].idrac_tach_open_drain_toggle);
 
 
   }
