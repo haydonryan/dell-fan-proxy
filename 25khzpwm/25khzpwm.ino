@@ -84,6 +84,16 @@ unsigned int map_fan_curve_pwm_based_on_input_pwm (unsigned int input_pwm ) {
   return 100;    //default safe
 }
 
+unsigned int calculate_idrac_tach_pwm_based_on_actual_fan_pwm (unsigned int input_rpm ) {
+// Fake RPM
+  // max we are likely to see is ~ 650HZ
+  unsigned long rpm;
+  rpm = input_rpm / 60L * 100 / 96;                              // 17k gives 16160 in bios 20k gives 19218 ~ 4-5% error
+  return (1000000L / (4 * rpm))  ; // two pulses a second = 4 edges dumbass
+}
+
+  
+
 
 void setup() {
   TCCR1A = 0;  // reset Timer/ Counter Control Registers
@@ -103,17 +113,7 @@ void setup() {
   loopcounter = 0;
   Serial.println("Starting up...");
 
-  Serial.print("map[90]= ");
-  Serial.println(map_fan_curve_pwm_based_on_input_pwm (90));
-  Serial.print("map[1001]= ");
-  Serial.println(map_fan_curve_pwm_based_on_input_pwm (1001));
-
-  // 
-  // Fake RPM
-  // max we are likely to see is ~ 650HZ
-  unsigned long freq;
-  freq = 600 / 60L * 100 / 96;                              // 17k gives 16160 in bios 20k gives 19218 ~ 4-5% error
-  fan[0].idrac_tach_increment = 1000000L / (4 * freq)  ; // two pulses a second = 4 edges dumbass
+  
   
   fan[0].fan_pwm_percent=60;
    
@@ -144,13 +144,23 @@ void loop() {
   // Once per second read the fan speed and print stats
   // 
   if ((duration = millis() - startTime) > 1000) {  // update once per second
-   
+
+
+    // Read Requested PWM %
     fan[0].idrac_pwn_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input);
+
+    // Measure Fan RPM
     fan[0].fan_rpm = pulses_per_time_to_rpm( fan[0].fan_rpm_interrupt_count, duration);
     
-    fan[0].idrac_rpm =  fan[0].fan_rpm ;                                                              // pass through fan RPM.
+   
     fan[0].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[0].idrac_pwn_percent_request); // map through requestd pwm via map to fan
-    
+
+
+      
+    fan[0].idrac_rpm =  fan[0].fan_rpm ;                                                                // pass through fan RPM. 
+    fan[0].idrac_tach_increment= calculate_idrac_tach_pwm_based_on_actual_fan_pwm(fan[0].idrac_rpm);    // calculate tach increment for desired fanspeed.      
+    fan[0].idrac_start_time_micros = micros();                                                          // reset tach timer
+
 
     if (loopcounter % 2) {              // only display stats every 2 seconds
       print_fan_statistics();
@@ -211,7 +221,8 @@ void openDrain(byte pin, bool value)
 void print_fan_statistics() {
   char buffer[256];
   
-  for (int i=0; i< NUMBER_OF_FANS; i++) {
+  for (int i=0; i< 1/*NUMBER_OF_FANS*/; i++) {
+    sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwn_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwn_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     Serial.println(buffer);
 
