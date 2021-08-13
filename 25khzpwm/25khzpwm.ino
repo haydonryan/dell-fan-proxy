@@ -225,10 +225,11 @@ unsigned int pulses_per_time_to_rpm( unsigned long total_pulses, unsigned int du
 
 
 void openDrain(byte pin, bool value)
-{ if (value)
+{
+  if (value)
     pinMode(pin, INPUT);
-  else
-  { pinMode(pin, OUTPUT);
+  else {
+    pinMode(pin, OUTPUT);
     digitalWrite(pin, LOW);
   }
 }
