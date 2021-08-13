@@ -148,8 +148,8 @@ void loop() {
     fan[0].idrac_pwn_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input);
     fan[0].fan_rpm = pulses_per_time_to_rpm( fan[0].fan_rpm_interrupt_count, duration);
     
-    fan[0].idrac_rpm =  fan[0].fan_rpm ;                              // pass through fan RPM.
-    fan[0].fan_pwm_percent =  fan[0].idrac_pwn_percent_request;       // pass through pwm to fan
+    fan[0].idrac_rpm =  fan[0].fan_rpm ;                                                              // pass through fan RPM.
+    fan[0].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[0].idrac_pwn_percent_request); // map through requestd pwm via map to fan
     
 
     if (loopcounter % 2) {              // only display stats every 2 seconds
