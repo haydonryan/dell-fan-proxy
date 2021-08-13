@@ -134,4 +134,8 @@ https://www.reddit.com/r/homelab/comments/beuks5/silencing_the_hp_dl380_for_good
 
 Setting the interrupt priority: https://www.youtube.com/watch?v=H3o08WE0zEI
 
+https://homeservershow.com/forums/topic/7294-faking-the-fan-signal/
 
+https://forum.arduino.cc/t/problem-measuring-4-pin-fan-rpm/666804/6
+http://www.benripley.com/diy/arduino/three-ways-to-read-a-pwm-signal-with-arduino/
+https://www.youtube.com/watch?v=nut1ZiiXzVU&t=143s
