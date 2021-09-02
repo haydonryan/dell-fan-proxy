@@ -53,7 +53,7 @@ struct fan_variable_structure {
 
   unsigned int fan_pwm_percent;                 // Write: output of the fan map that we send to the real fan
   unsigned int  fan_rpm;                        // Read: current RPM of the fan
-  unsigned int  fan_rpm_interrupt_count = 0;    // Var: how many interrupts do we get on the fan_tach_pin_input fan per cycle
+  volatile unsigned int  fan_rpm_interrupt_count = 0;    // Var: how many interrupts do we get on the fan_tach_pin_input fan per cycle
 };
 
 fan_variable_structure fan[NUMBER_OF_FANS];
