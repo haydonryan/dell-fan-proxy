@@ -116,10 +116,9 @@ void setup() {
 
   loopcounter = 0;
   Serial.println("Starting up...");
-
-  OCR1A = fan[0].fan_pwm_percent*320 / 100;
   
   fan[0].fan_pwm_percent=60;
+  OCR1A = fan[0].fan_pwm_percent*320 / 100;
    
   startTime = millis();
   fan[0].idrac_start_time_micros = micros();
