@@ -6,7 +6,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 // Pins to communiate with fan.
-const int fan_pwm_pin_output = 9;     // Blue Wire
+const int fan_pwm_pin_output = 11;     // Blue Wire  would use pin 9 on arduino uno
 const int fan_tach_pin_input = 2;     // Yellow Wire
 
 // Pins to communicate back to computer.
