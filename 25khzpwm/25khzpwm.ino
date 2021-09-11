@@ -5,7 +5,6 @@
 //
 ///////////////////////////////////////////////////////////////////////////
 
-// Main datastructure for storing fan variables
 const unsigned int NUMBER_OF_FANS = 6;
 
 // Pins to communiate with fan.
@@ -43,6 +42,7 @@ unsigned int loopcounter = 0;
 const unsigned int min_rpm = 30; // Fan still runs at 30, but 60 would be better for more airflow.
 const unsigned int max_rpm = 320;
 
+// Main datastructure for storing fan variables
 struct fan_variable_structure {
   unsigned int idrac_pwn_percent_request;       // Read: what fan speed is idrac requesting
   unsigned int idrac_rpm;                       // Var: desired rpm to generate for idrac
