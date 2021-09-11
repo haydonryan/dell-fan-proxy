@@ -111,7 +111,7 @@ void setup() {
   OCR1B = 0;
   Serial.begin(115200);
 
-  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[0]), counter, RISING); // yellow wire
+  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[0]), fan0counter, RISING); // yellow wire
   pinMode(computer_pwm_input[0], INPUT);
 
   loopcounter = 0;
@@ -180,8 +180,28 @@ void loop() {
   ++loopcounter;
 }
 
-void counter() {
+void fan0counter() {
   fan[0].fan_rpm_interrupt_count++;
+}
+
+void fan1counter() {
+  fan[1].fan_rpm_interrupt_count++;
+}
+
+void fan2counter() {
+  fan[2].fan_rpm_interrupt_count++;
+}
+
+void fan3counter() {
+  fan[3].fan_rpm_interrupt_count++;
+}
+
+void fan4counter() {
+  fan[4].fan_rpm_interrupt_count++;
+}
+
+void fan5counter() {
+  fan[5].fan_rpm_interrupt_count++;
 }
 
 // pulses occur twice every rotation
