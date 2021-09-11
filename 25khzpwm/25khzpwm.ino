@@ -9,12 +9,12 @@
 const unsigned int NUMBER_OF_FANS = 6;
 
 // Pins to communiate with fan.
-const int fan_pwm_pin_output[NUMBER_OF_FANS] = {11,0,0,0,0,0};     // Blue Wire  would use pin 9 on arduino uno
-const int fan_tach_pin_input[NUMBER_OF_FANS] = {2,0,0,0,0,0};     // Yellow Wire
+const int fan_pwm_pin_output[NUMBER_OF_FANS] = {11,0,0,0,0,0};     // Blue Wire.  Uses PWM registers and output
+const int fan_tach_pin_input[NUMBER_OF_FANS] = {2,0,0,0,0,0};      // Yellow Wire. Uses digital interrupts
 
 // Pins to communicate back to computer.
-const int computer_pwm_input[NUMBER_OF_FANS] = {10,0,0,0,0,0};     // using pin10 since it's paired with pin 9 for TCCR1B
-const int computer_tach_output[NUMBER_OF_FANS] = {12,0,0,0,0,0};   // update
+const int computer_pwm_input[NUMBER_OF_FANS] = {10,0,0,0,0,0};     // uses pulseIn to read a sample pwm length
+const int computer_tach_output[NUMBER_OF_FANS] = {12,0,0,0,0,0};   // Uses open drain to fake signal back.
 
 ///////////////////////////////////////////////////////////////////////////
 // Fan speed map
@@ -105,7 +105,8 @@ void setup() {
   TCCR1B = 0;  // reset adruino core library config
   TCNT1 = 0;   // reset timer counter
   TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11) ;
-  TCCR1B = _BV(WGM13) | _BV(CS10); //for pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
+  TCCR1B = _BV(WGM13) | _BV(CS10); // Arduino Uno: pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
+                                   // Arudino Mega: Pins 11 and 12
   ICR1 = 320;
   pinMode(fan_pwm_pin_output[0], OUTPUT);
   OCR1A = 0;
