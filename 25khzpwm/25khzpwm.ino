@@ -5,13 +5,16 @@
 //
 ///////////////////////////////////////////////////////////////////////////
 
+// Main datastructure for storing fan variables
+const unsigned int NUMBER_OF_FANS = 6;
+
 // Pins to communiate with fan.
-const int fan_pwm_pin_output = 11;     // Blue Wire  would use pin 9 on arduino uno
-const int fan_tach_pin_input = 2;     // Yellow Wire
+const int fan_pwm_pin_output[NUMBER_OF_FANS] = {11,0,0,0,0,0};     // Blue Wire  would use pin 9 on arduino uno
+const int fan_tach_pin_input[NUMBER_OF_FANS] = {2,0,0,0,0,0};     // Yellow Wire
 
 // Pins to communicate back to computer.
-const int computer_pwm_input = 10;     // using pin10 since it's paired with pin 9 for TCCR1B
-const int computer_tach_output = 12;   // update
+const int computer_pwm_input[NUMBER_OF_FANS] = {10,0,0,0,0,0};     // using pin10 since it's paired with pin 9 for TCCR1B
+const int computer_tach_output[NUMBER_OF_FANS] = {12,0,0,0,0,0};   // update
 
 ///////////////////////////////////////////////////////////////////////////
 // Fan speed map
@@ -39,9 +42,6 @@ unsigned int loopcounter = 0;
 // Clamp variables
 const unsigned int min_rpm = 30; // Fan still runs at 30, but 60 would be better for more airflow.
 const unsigned int max_rpm = 320;
-
-// Main datastructure for storing fan variables
-const unsigned int NUMBER_OF_FANS = 6;
 
 struct fan_variable_structure {
   unsigned int idrac_pwn_percent_request;       // Read: what fan speed is idrac requesting
@@ -106,13 +106,13 @@ void setup() {
   TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11) ;
   TCCR1B = _BV(WGM13) | _BV(CS10); //for pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
   ICR1 = 320;
-  pinMode(fan_pwm_pin_output, OUTPUT);
+  pinMode(fan_pwm_pin_output[0], OUTPUT);
   OCR1A = 0;
   OCR1B = 0;
   Serial.begin(115200);
 
-  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input), counter, RISING); // yellow wire
-  pinMode(computer_pwm_input, INPUT);
+  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[0]), counter, RISING); // yellow wire
+  pinMode(computer_pwm_input[0], INPUT);
 
   loopcounter = 0;
   Serial.println("Starting up...");
@@ -143,7 +143,7 @@ void loop() {
   if ( duration > fan[0].idrac_tach_increment) {  // toggle based on rpm
     fan[0].idrac_start_time_micros = current_time_in_micros;
     fan[0].idrac_tach_open_drain_toggle = !fan[0].idrac_tach_open_drain_toggle;
-    openDrain(computer_tach_output, fan[0].idrac_tach_open_drain_toggle);
+    openDrain(computer_tach_output[0], fan[0].idrac_tach_open_drain_toggle);
   }
 
 
@@ -154,7 +154,7 @@ void loop() {
 
 
     // Read Requested PWM %
-    fan[0].idrac_pwn_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input);
+    fan[0].idrac_pwn_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input[0]);
 
     // Measure Fan RPM
     fan[0].fan_rpm = pulses_per_time_to_rpm( fan[0].fan_rpm_interrupt_count, duration);
