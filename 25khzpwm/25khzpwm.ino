@@ -111,7 +111,9 @@ void setup() {
   TCCR5B = _BV(WGM13) | _BV(CS10); // Arduino Uno: pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
                                    // Arudino Mega: Pins 11 and 12
   ICR5 = 320;  // Set the top of the count (Input Capture Register) in PWM Phase Correct mode
-  pinMode(fan_pwm_pin_output[0], OUTPUT);
+  for (int i=0; i< NUMBER_OF_FANS;i++) {
+    pinMode(fan_pwm_pin_output[i], OUTPUT);
+  }
   OCR5A = 0;   // Reset Output Compare Registers
   OCR5B = 0;   // Reset Output Compare Registers
   OCR5C = 0;   // Reset Output Compare Registers
@@ -128,10 +130,22 @@ void setup() {
   Serial.println("Starting up...");
   
   fan[0].fan_pwm_percent=60;
+  fan[1].fan_pwm_percent=60;
+  fan[2].fan_pwm_percent=60;
+  fan[3].fan_pwm_percent=60;
+  fan[4].fan_pwm_percent=60;
+  fan[5].fan_pwm_percent=60;
   OCR5C = fan[0].fan_pwm_percent*320 / 100;
-   
+  OCR5B = fan[1].fan_pwm_percent*320 / 100;
+  OCR5A = fan[2].fan_pwm_percent*320 / 100;
+  OCR4A = fan[3].fan_pwm_percent*320 / 100;
+  OCR4B = fan[4].fan_pwm_percent*320 / 100;
+  OCR4C = fan[5].fan_pwm_percent*320 / 100;
+
   startTime = millis();
-  fan[0].idrac_start_time_micros = micros();
+  for (int i=0; i< NUMBER_OF_FANS;i++) {
+    fan[i].idrac_start_time_micros = micros();
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -162,29 +176,40 @@ void loop() {
   // 
   if ((duration = millis() - startTime) > 1000) {  // update once per second
 
+    for (int i=0; i< NUMBER_OF_FANS;i++) {
 
-    // Read Requested PWM %
-    fan[0].idrac_pwn_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input[0]);
+      // Read Requested PWM %
+      fan[i].idrac_pwn_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input[i]);
 
-    // Measure Fan RPM
-    fan[0].fan_rpm = pulses_per_time_to_rpm( fan[0].fan_rpm_interrupt_count, duration);
+      // Measure Fan RPM
+      fan[i].fan_rpm = pulses_per_time_to_rpm(fan[i].fan_rpm_interrupt_count, duration);
     
-    // Map idrac PWM % request to what we want fan PWM % to be
-    fan[0].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[0].idrac_pwn_percent_request);
+      // Map idrac PWM % request to what we want fan PWM % to be
+      fan[i].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[i].idrac_pwn_percent_request);
+    }
+
     OCR5C = fan[0].fan_pwm_percent*320 / 100;
+    OCR5B = fan[1].fan_pwm_percent*320 / 100;
+    OCR5A = fan[2].fan_pwm_percent*320 / 100;
+    OCR4A = fan[3].fan_pwm_percent*320 / 100;
+    OCR4B = fan[4].fan_pwm_percent*320 / 100;
+    OCR4C = fan[5].fan_pwm_percent*320 / 100;
 
     // Update RPM and tach that we want to generate for idrac
-    fan[0].idrac_rpm = map_idrac_rpm_based_from_pwm(fan[0].idrac_pwn_percent_request);                  // pass through fan RPM. 
-    fan[0].idrac_tach_increment= calculate_idrac_tach_pwm_based_on_actual_fan_pwm(fan[0].idrac_rpm);    // calculate tach increment for desired fanspeed.      
-    fan[0].idrac_start_time_micros = micros();                                                          // reset tach timer
-
+    for (int i=0; i< NUMBER_OF_FANS;i++) {
+      fan[i].idrac_rpm = map_idrac_rpm_based_from_pwm(fan[i].idrac_pwn_percent_request);                  // pass through fan RPM. 
+      fan[i].idrac_tach_increment= calculate_idrac_tach_pwm_based_on_actual_fan_pwm(fan[i].idrac_rpm);    // calculate tach increment for desired fanspeed.      
+      fan[i].idrac_start_time_micros = micros();                                                          // reset tach timer
+    }
 
     if (loopcounter % 2) {              // only display stats every 2 seconds
       print_fan_statistics();
     }
 
     startTime = millis();
-    fan[0].fan_rpm_interrupt_count = 0;
+    for (int i=0; i< NUMBER_OF_FANS;i++) {
+      fan[i].fan_rpm_interrupt_count = 0 ;
+    }
   }
 
   ++loopcounter;
@@ -296,7 +321,7 @@ unsigned int map_idrac_rpm_based_from_pwm(unsigned int input_pwm ) {
 void print_fan_statistics() {
   char buffer[256];
   
-  for (int i=0; i< 1/*NUMBER_OF_FANS*/; i++) {
+  for (int i=0; i< 3/*NUMBER_OF_FANS*/; i++) {
     sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwn_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwn_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     Serial.println(buffer);
