@@ -9,8 +9,8 @@
 const unsigned int NUMBER_OF_FANS = 6;
 
 // Pins to communiate with fan.
-const int fan_pwm_pin_output[NUMBER_OF_FANS] = {11,45,46,6,7,8};     // Blue Wire.  Uses PWM registers and output   TODO: CHANGE PIN 11 to 44
-const int fan_tach_pin_input[NUMBER_OF_FANS] = {20,3,18,18,20,21};      // Yellow Wire. Uses digital interrupts TODO: 20 and 21 don't work because of the internal 10k pullup
+const int fan_pwm_pin_output[NUMBER_OF_FANS] = {44,45,46,6,7,8};     // Blue Wire.  Uses PWM registers and output   TODO: CHANGE PIN 11 to 44
+const int fan_tach_pin_input[NUMBER_OF_FANS] = {2,3,18,19,20,21};      // Yellow Wire. Uses digital interrupts TODO: 20 and 21 don't work because of the internal 10k pullup
 
 // Pins to communicate back to computer.
 const int computer_pwm_input[NUMBER_OF_FANS] = {22,23,24,25,26,27};     // uses pulseIn to read a sample pwm length
@@ -101,19 +101,20 @@ unsigned int calculate_idrac_tach_pwm_based_on_actual_fan_pwm (unsigned int inpu
 
 // https://www.robotshop.com/community/forum/t/arduino-101-timers-and-interrupts/13072
 void setup() {
-  TCCR1A = 0;  // reset Timer Counter Control Registers
-  TCCR1B = 0;  // reset Timer Counter Control Register
-  TCNT1 = 0;   // reset Timer Count Register
+  TCCR5A = 0;  // reset Timer Counter Control Registers
+  TCCR5B = 0;  // reset Timer Counter Control Register
+  TCNT5 = 0;   // reset Timer Count Register
 
   // Set to PWM Phase Correct Mode WGM11+WGM13 See https://ww1.microchip.com/downloads/en/devicedoc/atmel-2549-8-bit-avr-microcontroller-atmega640-1280-1281-2560-2561_datasheet.pdf PG 145
 
-  TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11) ;   // _BV() is bit value equivalent to 1<<COM1A1
-  TCCR1B = _BV(WGM13) | _BV(CS10); // Arduino Uno: pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
+  TCCR5A = _BV(COM5A1) | _BV(COM5B1) | _BV(COM5C1)| _BV(WGM11) ;   // _BV() is bit value equivalent to 1<<COM1A1
+  TCCR5B = _BV(WGM13) | _BV(CS10); // Arduino Uno: pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
                                    // Arudino Mega: Pins 11 and 12
-  ICR1 = 320;  // Set the top of the count (Input Capture Register) in PWM Phase Correct mode
+  ICR5 = 320;  // Set the top of the count (Input Capture Register) in PWM Phase Correct mode
   pinMode(fan_pwm_pin_output[0], OUTPUT);
-  OCR1A = 0;   // Reset Output Compare Registers
-  OCR1B = 0;   // Reset Output Compare Registers
+  OCR5A = 0;   // Reset Output Compare Registers
+  OCR5B = 0;   // Reset Output Compare Registers
+  OCR5C = 0;   // Reset Output Compare Registers
   Serial.begin(115200);
 
   // Disable i2C as pins 20 and 21 use it. 
@@ -127,7 +128,7 @@ void setup() {
   Serial.println("Starting up...");
   
   fan[0].fan_pwm_percent=60;
-  OCR1A = fan[0].fan_pwm_percent*320 / 100;
+  OCR5C = fan[0].fan_pwm_percent*320 / 100;
    
   startTime = millis();
   fan[0].idrac_start_time_micros = micros();
@@ -170,7 +171,7 @@ void loop() {
     
     // Map idrac PWM % request to what we want fan PWM % to be
     fan[0].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[0].idrac_pwn_percent_request);
-    OCR1A = fan[0].fan_pwm_percent*320 / 100;
+    OCR5C = fan[0].fan_pwm_percent*320 / 100;
 
     // Update RPM and tach that we want to generate for idrac
     fan[0].idrac_rpm = map_idrac_rpm_based_from_pwm(fan[0].idrac_pwn_percent_request);                  // pass through fan RPM. 
