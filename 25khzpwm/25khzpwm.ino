@@ -99,19 +99,26 @@ unsigned int calculate_idrac_tach_pwm_based_on_actual_fan_pwm (unsigned int inpu
 // 
 ///////////////////////////////////////////////////////////////////////////
 
-
+// https://www.robotshop.com/community/forum/t/arduino-101-timers-and-interrupts/13072
 void setup() {
-  TCCR1A = 0;  // reset Timer/ Counter Control Registers
-  TCCR1B = 0;  // reset adruino core library config
-  TCNT1 = 0;   // reset timer counter
-  TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11) ;
+  TCCR1A = 0;  // reset Timer Counter Control Registers
+  TCCR1B = 0;  // reset Timer Counter Control Register
+  TCNT1 = 0;   // reset Timer Count Register
+
+  // Set to PWM Phase Correct Mode WGM11+WGM13 See https://ww1.microchip.com/downloads/en/devicedoc/atmel-2549-8-bit-avr-microcontroller-atmega640-1280-1281-2560-2561_datasheet.pdf PG 145
+
+  TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11) ;   // _BV() is bit value equivalent to 1<<COM1A1
   TCCR1B = _BV(WGM13) | _BV(CS10); // Arduino Uno: pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
                                    // Arudino Mega: Pins 11 and 12
-  ICR1 = 320;
+  ICR1 = 320;  // Set the top of the count (Input Capture Register) in PWM Phase Correct mode
   pinMode(fan_pwm_pin_output[0], OUTPUT);
-  OCR1A = 0;
-  OCR1B = 0;
+  OCR1A = 0;   // Reset Output Compare Registers
+  OCR1B = 0;   // Reset Output Compare Registers
   Serial.begin(115200);
+
+  // Disable i2C as pins 20 and 21 use it. 
+  pinMode(SDA, INPUT);
+  pinMode(SCL, INPUT);
 
   attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[0]), fan0counter, RISING); // yellow wire
   pinMode(computer_pwm_input[0], INPUT);
