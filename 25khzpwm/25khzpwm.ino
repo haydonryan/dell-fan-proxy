@@ -101,6 +101,7 @@ unsigned int calculate_idrac_tach_pwm_based_on_actual_fan_pwm (unsigned int inpu
 
 // https://www.robotshop.com/community/forum/t/arduino-101-timers-and-interrupts/13072
 void setup() {
+  // D44, D45 & D46 - Register 5
   TCCR5A = 0;  // reset Timer Counter Control Registers
   TCCR5B = 0;  // reset Timer Counter Control Register
   TCNT5 = 0;   // reset Timer Count Register
@@ -111,12 +112,30 @@ void setup() {
   TCCR5B = _BV(WGM13) | _BV(CS10); // Arduino Uno: pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
                                    // Arudino Mega: Pins 11 and 12
   ICR5 = 320;  // Set the top of the count (Input Capture Register) in PWM Phase Correct mode
-  for (int i=0; i< NUMBER_OF_FANS;i++) {
-    pinMode(fan_pwm_pin_output[i], OUTPUT);
-  }
   OCR5A = 0;   // Reset Output Compare Registers
   OCR5B = 0;   // Reset Output Compare Registers
   OCR5C = 0;   // Reset Output Compare Registers
+
+  // D6, D7, D8 - Register 4
+  TCCR4A = 0;  // reset Timer Counter Control Registers
+  TCCR4B = 0;  // reset Timer Counter Control Register
+  TCNT4 = 0;   // reset Timer Count Register
+
+  // Set to PWM Phase Correct Mode WGM11+WGM13 See https://ww1.microchip.com/downloads/en/devicedoc/atmel-2549-8-bit-avr-microcontroller-atmega640-1280-1281-2560-2561_datasheet.pdf PG 145
+
+  TCCR4A = _BV(COM4A1) | _BV(COM4B1) | _BV(COM4C1)| _BV(WGM11) ;   // _BV() is bit value equivalent to 1<<COM1A1
+  TCCR4B = _BV(WGM13) | _BV(CS10); // Arduino Uno: pins 9 and 10 on arduino uno see https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
+                                   // Arudino Mega: Pins 11 and 12
+  ICR4 = 320;  // Set the top of the count (Input Capture Register) in PWM Phase Correct mode
+  OCR4A = 0;   // Reset Output Compare Registers
+  OCR4B = 0;   // Reset Output Compare Registers
+  OCR4C = 0;   // Reset Output Compare Registers
+
+
+  for (int i=0; i< NUMBER_OF_FANS;i++) {
+    pinMode(fan_pwm_pin_output[i], OUTPUT);
+  }
+
   Serial.begin(115200);
 
   // Disable i2C as pins 20 and 21 use it. 
@@ -322,7 +341,7 @@ unsigned int map_idrac_rpm_based_from_pwm(unsigned int input_pwm ) {
 void print_fan_statistics() {
   char buffer[256];
   
-  for (int i=0; i< 3/*NUMBER_OF_FANS*/; i++) {
+  for (int i=0; i< NUMBER_OF_FANS; i++) {
     sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwn_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwn_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     Serial.println(buffer);
