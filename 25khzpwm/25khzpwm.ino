@@ -137,15 +137,24 @@ void setup() {
   }
 
   Serial.begin(115200);
+  loopcounter = 0;
 
   // Disable i2C as pins 20 and 21 use it. 
   pinMode(SDA, INPUT);
   pinMode(SCL, INPUT);
 
-  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[0]), fan0counter, RISING); // yellow wire
-  pinMode(computer_pwm_input[0], INPUT);
+  // Setup Interrupts to read RPM from all tach pins
+  for (int i=0; i< NUMBER_OF_FANS;i++) {
+    pinMode(computer_pwm_input[i], INPUT);
+  }
 
-  loopcounter = 0;
+  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[0]), fan0counter, RISING); // yellow wire
+  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[1]), fan1counter, RISING); // yellow wire
+  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[2]), fan2counter, RISING); // yellow wire
+  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[3]), fan3counter, RISING); // yellow wire
+  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[4]), fan4counter, RISING); // yellow wire
+  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[5]), fan5counter, RISING); // yellow wire
+
   Serial.println("Starting up...");
   
   fan[0].fan_pwm_percent=60;
