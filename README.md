@@ -125,6 +125,43 @@ Today I got to the milestone of intercepting the fan signal from my desktop and 
 
 Next up is to make some harnesses and test with one fan in the server.
 
+## September 7 2021
+Decided to go the route of migrating the code to the atmega board.  Created a makefile and helper script to use the command line insted of the GUI.  Google tests for some of the code would be an interesting exercise too.
+
+Next up I'm going to expand this to 6 channels on the board before testing in the server.  I've also started thinking what the actual hardware solution would look like if I made a PCB.
+
+
+## September 11 2021
+Expanded the data structures up to 6 fans.  
+
+Running into issues around the fan PWM driver - I don't follow how the timers work with PWM signals - so need to do some research on that before continuing.  I guess I could try reading in teh signals that don't require PWM from other pins, but it feels like doing the hardest part first would be smarter.
+Arduino Pin	 Register
+2	OCR3B
+3	OCR3C
+4	OCR4C
+5	OCR3A
+6	OCR4A
+7	OCR4B
+8	OCR4C
+9	OCR2B
+10	OCR2A
+11	OCR1A
+12	OCR1B
+13	OCR0A
+44	OCR5C
+45	OCR5B
+46	OCR5A
+
+source: http://astro.neutral.org/arduino/arduino-pwm-pins-frequency.shtml
+
+## NEXT
+
+https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
+
+## Sat Sep 25 2021 
+Expanded the program to output on 6 separate PWM channels. Meaning we're getting close to doing some hardware testing.
+Calculated each fan at 100% uses 20W of power. - or 120W for the whole machine.
+
 # Possible improvements
 It would be much safer to map the fan speed returned to idrac from the detected speed of the fan, not the requested rpm. That way if a fan fails, then idrac will throw a fault.
 
