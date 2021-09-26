@@ -181,11 +181,11 @@ void loop() {
   // Toggle open drain based on the desired frequency
   // 
   for (int i=0; i< NUMBER_OF_FANS;i++) {
-    duration = (current_time_in_micros - fan[0].idrac_start_time_micros);
-    if ( duration > fan[0].idrac_tach_increment) {  // toggle based on rpm
-      fan[0].idrac_start_time_micros = current_time_in_micros;
-      fan[0].idrac_tach_open_drain_toggle = !fan[0].idrac_tach_open_drain_toggle;
-      openDrain(computer_tach_output[0], fan[0].idrac_tach_open_drain_toggle);
+    duration = (current_time_in_micros - fan[i].idrac_start_time_micros);
+    if ( duration > fan[i].idrac_tach_increment) {  // toggle based on rpm
+      fan[i].idrac_start_time_micros = current_time_in_micros;
+      fan[i].idrac_tach_open_drain_toggle = !fan[i].idrac_tach_open_drain_toggle;
+      openDrain(computer_tach_output[i], fan[i].idrac_tach_open_drain_toggle);
     }
   }
 
