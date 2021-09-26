@@ -66,9 +66,8 @@ fan_variable_structure fan[NUMBER_OF_FANS];
 unsigned int map_fan_curve_pwm_based_on_input_pwm (unsigned int input_pwm ) {
 
   if (input_pwm > 100 ) input_pwm = 100;
-
   for (unsigned int i = 1; i < FAN_MAP_POINTS; i++) {
-    if ( fan_curve_map[i - 1][0] < input_pwm && input_pwm <= fan_curve_map[i][0] ) {
+    if ( fan_curve_map[i - 1][0] <= input_pwm && input_pwm <= fan_curve_map[i][0] ) {
       float fan_curve_base = i - 1;
       float y, x;
 
@@ -267,6 +266,14 @@ unsigned int read_idrac_pwm_value_in_percentage (unsigned int pin) {
 
     high_duration = pulseIn(pin, HIGH, 400);
     low_duration = pulseIn(pin, LOW, 400);
+    if((low_duration + high_duration) == 0)  {
+      int var = digitalRead(pin);
+      if(var == LOW) {
+        return 0;
+        } else {
+        return 100;
+        }
+      }
     percent = (100 * high_duration) / (low_duration + high_duration);
     if (percent > 100) percent=100;
 
@@ -316,7 +323,7 @@ unsigned int map_idrac_rpm_based_from_pwm(unsigned int input_pwm ) {
   if (input_pwm > 100 ) input_pwm = 100;
 
   for (unsigned int i = 1; i < MAX_RPM_MAP_POINTS; i++) {
-    if ( rpm_map[i - 1][0] < input_pwm && input_pwm <= rpm_map[i][0] ) {
+    if ( rpm_map[i - 1][0] <= input_pwm && input_pwm <= rpm_map[i][0] ) {
       float fan_curve_base = i - 1;
       float y, x;
 
