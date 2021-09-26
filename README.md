@@ -162,6 +162,10 @@ https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
 Expanded the program to output on 6 separate PWM channels. Meaning we're getting close to doing some hardware testing.
 Calculated each fan at 100% uses 20W of power. - or 120W for the whole machine.
 
+Pin 20 and 21 for reading the fan tach - works by just wiring the signal pulled high directly in.
+
+I fixed a couple of bugs in the mapping code - it didn't work for a zero value.  Not good, but oh well. Fixed at least.  Should be ready to try the hardware for tomorrow in the server.
+
 # Possible improvements
 It would be much safer to map the fan speed returned to idrac from the detected speed of the fan, not the requested rpm. That way if a fan fails, then idrac will throw a fault.
 
