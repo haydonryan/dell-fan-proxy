@@ -45,7 +45,7 @@ const unsigned int max_rpm = 320;
 
 // Main datastructure for storing fan variables
 struct fan_variable_structure {
-  unsigned int idrac_pwn_percent_request;       // Read: what fan speed is idrac requesting
+  unsigned int idrac_pwm_percent_request;       // Read: what fan speed is idrac requesting
   unsigned int idrac_rpm;                       // Var: desired rpm to generate for idrac
   
   unsigned long idrac_tach_increment;           // Var: the increment used for timing how often we need to pulse
@@ -174,7 +174,6 @@ void setup() {
 void loop() {
 
   unsigned long duration;
-
   unsigned long current_time_in_micros = micros();
 
   //////////////////////////////////////////////////////
@@ -199,13 +198,13 @@ void loop() {
       fan[i].fan_rpm = pulses_per_time_to_rpm(fan[i].fan_rpm_interrupt_count, duration);
 
       // Read Requested PWM %
-      fan[i].idrac_pwn_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input[i]);
+      fan[i].idrac_pwm_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input[i]);
 
       // Map idrac PWM % request to what we want fan PWM % to be
-      fan[i].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[i].idrac_pwn_percent_request);
+      fan[i].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[i].idrac_pwm_percent_request);
 
       // Update RPM and tach that we want to generate for idrac
-      fan[i].idrac_rpm = map_idrac_rpm_based_from_pwm(fan[i].idrac_pwn_percent_request);                  // pass through fan RPM.
+      fan[i].idrac_rpm = map_idrac_rpm_based_from_pwm(fan[i].idrac_pwm_percent_request);                  // pass through fan RPM.
       fan[i].idrac_tach_increment= calculate_idrac_tach_pwm_based_on_actual_fan_pwm(fan[i].idrac_rpm);    // calculate tach increment for desired fanspeed.
       fan[i].idrac_start_time_micros = micros();                                                          // reset tach timer
     }
@@ -338,8 +337,8 @@ void print_fan_statistics() {
   char buffer[256];
   
   for (int i=0; i< NUMBER_OF_FANS; i++) {
-    sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwn_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
-    sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwn_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
+    sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwm_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
+    sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwm_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     Serial.println(buffer);
 
   }
