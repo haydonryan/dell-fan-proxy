@@ -13,8 +13,8 @@ const int fan_pwm_pin_output[NUMBER_OF_FANS] = {44,45,46,6,7,8};     // Blue Wir
 const int fan_tach_pin_input[NUMBER_OF_FANS] = {2,3,18,19,20,21};      // Yellow Wire. Uses digital interrupts TODO: 20 and 21 don't work because of the internal 10k pullup
 
 // Pins to communicate back to computer.
-const int computer_pwm_input[NUMBER_OF_FANS] = {22,23,24,25,26,27};     // uses pulseIn to read a sample pwm length
-const int computer_tach_output[NUMBER_OF_FANS] = {32,33,34,35,36,37};   // Uses open drain to fake signal back.
+const int computer_pwm_input[NUMBER_OF_FANS] = {22,23,24,25,26,27};     // Blue Wire. uses pulseIn to read a sample pwm length
+const int computer_tach_output[NUMBER_OF_FANS] = {32,33,34,35,36,37};   // Yellow Wire. Uses open drain to fake signal back.
 
 ///////////////////////////////////////////////////////////////////////////
 // Fan speed map
