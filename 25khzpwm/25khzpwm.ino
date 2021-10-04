@@ -27,9 +27,9 @@ const unsigned int FAN_MAP_POINTS = 5; // MIN 3 points
 
 unsigned int fan_curve_map[FAN_MAP_POINTS][2] =
 { {0, 0},    // leave as {0,0}
-  {40, 20},
-  {50, 30},
-  {80, 40},
+  {20, 20},
+  {50, 25},
+  {80, 30},
   {100, 100} // leave as {100,100}
 };
 
