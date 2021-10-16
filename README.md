@@ -87,7 +87,7 @@ Once I connected the PWM signal and scoped the tach output, I got a ton of noise
 
 ## April 16 2021
 Low pass filter 
-10 ohm resister
+10k ohm resister
 15 farad - not enough filtering
 331= 330pf sweet spot
 104 (100000pf) seriously rounds the square wave. 
@@ -165,6 +165,23 @@ Calculated each fan at 100% uses 20W of power. - or 120W for the whole machine.
 Pin 20 and 21 for reading the fan tach - works by just wiring the signal pulled high directly in.
 
 I fixed a couple of bugs in the mapping code - it didn't work for a zero value.  Not good, but oh well. Fixed at least.  Should be ready to try the hardware for tomorrow in the server.
+
+## Wed Sep 29 2021 
+Tested the fan project in the server last night - and it worked really well. Next up - test with 6 channels populated - meaning that I need to make 5 more adaptors.  I also realized that the external USB doesn't provide power while the motherboard is off, so I might not be able to use that to provide power to the board since one of the central fans spins while the server is off.
+
+## Sat Oct 16 2021 
+Was able to plug the fan project in and use VIN to power the arduino.  I did notice that power was going back into the computer though via the VIN when the usb was plugged into my laptop. Looks like I need a 1N4000 family diode to stop current going back into the computer from the arduino.  I have a bunch of 1N4007 in one of the starter kits.
+Also realized that the minimum speed of 0 doesn't work well when the computer is off but IDRAC is on, so I changed the minimum speed to 20% this seems to work nicely with it off, and on - provides a reasonable amount of air, while not being super loud.
+
+I can't seem to get SDA /SCL reading the fan tach signal correctly - tried pulling them high with another 10kohm resistor, as well as different configurations (didn't try a pull down resistor though).  I ended up posting the question to reddit as it's beyond my level of understanding
+
+
+# Making cable tips.
+Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
+Cut the termianl off the tape but leave the small bit of tape on for hodling it steady.
+put the termianl into the 1.3mm crimp size first all the way up to the tape - it should hold iself in there - making it easier to feed in the cable(s).
+
+Do the dual power lead crimp first (it's the hardest)
 
 # Possible improvements
 It would be much safer to map the fan speed returned to idrac from the detected speed of the fan, not the requested rpm. That way if a fan fails, then idrac will throw a fault.
