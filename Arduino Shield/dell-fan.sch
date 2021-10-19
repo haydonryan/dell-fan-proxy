@@ -241,17 +241,6 @@ $EndComp
 Text Label 8450 1500 0    60   ~ 0
 Reset
 $Comp
-L power:+5V #PWR02
-U 1 1 56D71D10
-P 8850 1000
-F 0 "#PWR02" H 8850 850 50  0001 C CNN
-F 1 "+5V" V 8850 1200 50  0000 C CNN
-F 2 "" H 8850 1000 50  0000 C CNN
-F 3 "" H 8850 1000 50  0000 C CNN
-	1    8850 1000
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GND #PWR03
 U 1 1 56D721E6
 P 8550 1900

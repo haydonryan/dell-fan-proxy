@@ -377,10 +377,6 @@ Wire Wire Line
 Wire Wire Line
 	9350 3250 8900 3250
 Wire Wire Line
-	8900 3350 9350 3350
-Wire Wire Line
-	9350 3450 8900 3450
-Wire Wire Line
 	8900 3550 9350 3550
 Wire Wire Line
 	10400 3250 10150 3250
@@ -848,7 +844,7 @@ Text Label 6050 3800 0    50   ~ 0
 NC
 Text GLabel 8750 2700 0    50   Input ~ 0
 PC3_PWM
-Text GLabel 8750 3750 0    50   Input ~ 0
+Text GLabel 8750 3350 0    50   Input ~ 0
 PC5_PWM
 Text GLabel 8750 2400 0    50   Input ~ 0
 PC1_TACH
@@ -858,7 +854,7 @@ Text GLabel 8750 2800 0    50   Input ~ 0
 PC3_TACH
 Text GLabel 8750 3000 0    50   Input ~ 0
 PC4_TACH
-Text GLabel 8750 3650 0    50   Input ~ 0
+Text GLabel 8750 3450 0    50   Input ~ 0
 PC5_TACH
 Text GLabel 8750 3950 0    50   Input ~ 0
 PC6_TACH
@@ -1939,6 +1935,10 @@ Wire Wire Line
 	8750 3850 9350 3850
 Wire Wire Line
 	8750 3750 9350 3750
+Wire Wire Line
+	8750 3350 9350 3350
+Wire Wire Line
+	8750 3450 9350 3450
 Wire Wire Line
 	8750 3650 9350 3650
 $EndSCHEMATC
