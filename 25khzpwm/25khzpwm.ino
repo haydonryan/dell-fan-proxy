@@ -10,7 +10,7 @@ const unsigned int NUMBER_OF_FANS = 6;
 
 // Pins to communiate with fan.
 const int fan_pwm_pin_output[NUMBER_OF_FANS] = {8,7,6,46,45,44};     // Blue Wire.  Uses PWM registers and output   TODO: CHANGE PIN 11 to 44
-const int fan_tach_pin_input[NUMBER_OF_FANS] = {2,3,18,19,20,21};      // Yellow Wire. Uses digital interrupts TODO: 20 and 21 don't work because of the internal 10k pullup
+const int fan_tach_pin_input[NUMBER_OF_FANS] = {3,2,18,19,20,21};      // Yellow Wire. Uses digital interrupts TODO: 20 and 21 don't work because of the internal 10k pullup
 
 // Pins to communicate back to computer.
 const int computer_pwm_input[NUMBER_OF_FANS] = {22,23,24,25,26,27};     // Blue Wire. uses pulseIn to read a sample pwm length
