@@ -353,6 +353,26 @@ void print_fan_statistics() {
 
   return;
 }
+#define HISTORY_ARRAY_SIZE 10
+
+float average(int *array, int len) {
+  float average=0.0;
+
+  for (int i=0;i <len;i++)  {
+    average +=(float)array[i];
+  }
+
+  average=average/len;
+  return average;
+}
+
+void insert(int *array, int value) {
+
+  for (int i=1;i <HISTORY_ARRAY_SIZE;i++)  {
+    array[i] = array[i-1];
+  }
+  array[0]= value;
+}
 
 // notes: default Falcon CPU speed 27% PWM
 
