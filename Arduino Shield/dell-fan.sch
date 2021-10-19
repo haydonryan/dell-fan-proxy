@@ -19,35 +19,35 @@ IOREF
 Text Label 8750 1150 1    60   ~ 0
 Vin
 Text Label 8900 2300 0    60   ~ 0
-A0
+D54
 Text Label 8900 2400 0    60   ~ 0
-A1
+D55
 Text Label 8900 2500 0    60   ~ 0
-A2
+D56
 Text Label 8900 2600 0    60   ~ 0
-A3
+D57
 Text Label 8900 2700 0    60   ~ 0
-A4
+D58
 Text Label 8900 2900 0    60   ~ 0
-A6
+D60
 Text Label 8900 3000 0    60   ~ 0
-A7
+D61
 Text Label 8900 3250 0    60   ~ 0
-A8
+D62
 Text Label 8900 3350 0    60   ~ 0
-A9
+D63
 Text Label 8900 3450 0    60   ~ 0
-A10
+D64
 Text Label 8900 3550 0    60   ~ 0
-A11
+D65
 Text Label 8900 3650 0    60   ~ 0
-A12
+D66
 Text Label 8900 3750 0    60   ~ 0
-A13
+D67
 Text Label 8900 3850 0    60   ~ 0
-A14
+D68
 Text Label 8900 3950 0    60   ~ 0
-A15
+D69
 Text Label 10500 4650 1    60   ~ 0
 22
 Text Label 10400 4650 1    60   ~ 0
@@ -377,19 +377,7 @@ Wire Wire Line
 Wire Wire Line
 	9350 3250 8900 3250
 Wire Wire Line
-	8900 3350 9350 3350
-Wire Wire Line
-	9350 3450 8900 3450
-Wire Wire Line
 	8900 3550 9350 3550
-Wire Wire Line
-	9350 3650 8900 3650
-Wire Wire Line
-	8900 3750 9350 3750
-Wire Wire Line
-	9350 3850 8900 3850
-Wire Wire Line
-	8900 3950 9350 3950
 Wire Wire Line
 	10400 3250 10150 3250
 Wire Wire Line
@@ -554,20 +542,6 @@ $EndComp
 Wire Wire Line
 	1900 4550 1900 5000
 Connection ~ 1900 5000
-Wire Wire Line
-	8900 3000 9350 3000
-Wire Wire Line
-	9350 2900 8900 2900
-Wire Wire Line
-	9350 2700 8900 2700
-Wire Wire Line
-	8900 2600 9350 2600
-Wire Wire Line
-	9350 2500 8900 2500
-Wire Wire Line
-	8900 2400 9350 2400
-Wire Wire Line
-	9350 2300 8900 2300
 $Comp
 L Connector_Generic:Conn_01x08 P3
 U 1 1 56D72F1C
@@ -580,9 +554,7 @@ F 3 "" H 9550 2600 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Text Label 8900 2800 0    60   ~ 0
-A5
-Wire Wire Line
-	8900 2800 9350 2800
+D59
 $Comp
 L Connector_Generic:Conn_01x08 P6
 U 1 1 56D734D0
@@ -614,7 +586,7 @@ Wire Wire Line
 	1100 700  1200 700 
 Text GLabel 1100 1200 0    50   Input ~ 0
 FAN1_12v
-Text GLabel 10500 4450 1    50   Input ~ 0
+Text GLabel 8750 2300 0    50   Input ~ 0
 PC1_PWM
 Text GLabel 1100 700  0    50   Input ~ 0
 PC1_PWM
@@ -870,21 +842,21 @@ Wire Wire Line
 	6050 3800 6050 4050
 Text Label 6050 3800 0    50   ~ 0
 NC
-Text GLabel 10400 4450 1    50   Input ~ 0
+Text GLabel 8750 2700 0    50   Input ~ 0
 PC3_PWM
-Text GLabel 10300 4450 1    50   Input ~ 0
+Text GLabel 8750 3350 0    50   Input ~ 0
 PC5_PWM
-Text GLabel 10000 4500 1    50   Input ~ 0
+Text GLabel 8750 2400 0    50   Input ~ 0
 PC1_TACH
-Text GLabel 10000 5800 3    50   Input ~ 0
+Text GLabel 8750 2600 0    50   Input ~ 0
 PC2_TACH
-Text GLabel 9900 4500 1    50   Input ~ 0
+Text GLabel 8750 2800 0    50   Input ~ 0
 PC3_TACH
-Text GLabel 9900 5800 3    50   Input ~ 0
+Text GLabel 8750 3000 0    50   Input ~ 0
 PC4_TACH
-Text GLabel 9800 4500 1    50   Input ~ 0
+Text GLabel 8750 3450 0    50   Input ~ 0
 PC5_TACH
-Text GLabel 9800 5800 3    50   Input ~ 0
+Text GLabel 8750 3950 0    50   Input ~ 0
 PC6_TACH
 Text GLabel 10750 2700 2    50   Input ~ 0
 FAN1_TACH
@@ -906,10 +878,6 @@ Text GLabel 9300 4500 1    50   Input ~ 0
 FAN4_PWM
 Text GLabel 9400 5750 3    50   Input ~ 0
 FAN5_PWM
-Text GLabel 9400 4500 1    50   Input ~ 0
-FAN6_PWM
-Text GLabel 10750 2050 2    50   Input ~ 0
-FAN1_PWM
 $Comp
 L Device:R_US R9
 U 1 1 61AA28E2
@@ -1532,11 +1500,11 @@ Text Notes 10700 7650 0    50   ~ 0
 0.69
 Wire Wire Line
 	10500 4450 10500 4850
-Text GLabel 10300 5800 3    50   Input ~ 0
+Text GLabel 8750 3850 0    50   Input ~ 0
 PC6_PWM
-Text GLabel 10400 5800 3    50   Input ~ 0
+Text GLabel 8750 2900 0    50   Input ~ 0
 PC4_PWM
-Text GLabel 10500 5800 3    50   Input ~ 0
+Text GLabel 8750 2500 0    50   Input ~ 0
 PC2_PWM
 Wire Wire Line
 	10500 5350 10500 5800
@@ -1941,4 +1909,36 @@ Text Notes 3200 5750 0    50   ~ 0
 NC
 Text Notes 1750 5750 0    50   ~ 0
 NC
+Text GLabel 10750 2050 2    50   Input ~ 0
+FAN1_PWM
+Wire Wire Line
+	8750 2300 9350 2300
+Wire Wire Line
+	8750 2400 9350 2400
+Wire Wire Line
+	8750 2600 9350 2600
+Wire Wire Line
+	8750 2500 9350 2500
+Wire Wire Line
+	8750 2700 9350 2700
+Wire Wire Line
+	8750 2800 9350 2800
+Wire Wire Line
+	8750 3000 9350 3000
+Wire Wire Line
+	8750 2900 9350 2900
+Text GLabel 9400 4500 1    50   Input ~ 0
+FAN6_PWM
+Wire Wire Line
+	8750 3950 9350 3950
+Wire Wire Line
+	8750 3850 9350 3850
+Wire Wire Line
+	8750 3750 9350 3750
+Wire Wire Line
+	8750 3350 9350 3350
+Wire Wire Line
+	8750 3450 9350 3450
+Wire Wire Line
+	8750 3650 9350 3650
 $EndSCHEMATC
