@@ -413,7 +413,7 @@ float average(int *array, int len) {
 
 void insert(int *array, int value) {
 
-  for (int i=1;i <HISTORY_ARRAY_SIZE;i++)  {
+  for (int i=HISTORY_ARRAY_SIZE-1;i >= 1;i--)  {
     array[i] = array[i-1];
   }
   array[0]= value;
