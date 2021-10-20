@@ -196,6 +196,11 @@ void loop() {
       // Measure Fan RPM
       fan[i].fan_rpm = pulses_per_time_to_rpm(fan[i].fan_rpm_interrupt_count, duration);
 
+      if (i==0) {
+        Serial.println("orig= ");
+        Serial.println(fan[0].fan_rpm);
+        fan[0].fan_rpm = read_fan_speed_in_rpm(fan_tach_pin_input[0]);
+      }
       // Read Requested PWM %
       fan[i].idrac_pwm_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input[i]);
 
@@ -266,6 +271,7 @@ unsigned int read_idrac_pwm_value_in_percentage (unsigned int pin) {
 
     high_duration = pulseIn(pin, HIGH, 400);
     low_duration = pulseIn(pin, LOW, 400);
+
     if((low_duration + high_duration) == 0)  {
       int var = digitalRead(pin);
       if(var == LOW) {
@@ -289,6 +295,44 @@ unsigned int read_idrac_pwm_value_in_percentage (unsigned int pin) {
       Serial.println(percent);
      }
     return percent;
+}
+
+unsigned int read_fan_speed_in_rpm(unsigned int pin) {
+   unsigned long high_duration, low_duration, rpm;
+
+    high_duration = pulseIn(pin, HIGH, 400);
+    low_duration = pulseIn(pin, LOW, 400);
+
+    if((low_duration + high_duration) == 0)  {
+      int var = digitalRead(pin);
+//      if(var == LOW) {
+        return 0;
+ //       } else {
+        return 100;
+  //      }
+      }
+
+    rpm = 30000000 / (low_duration + high_duration); // two puses per second
+
+    if(1) {  // debug flag
+      Serial.println();
+      Serial.print(" highduration = ");
+      Serial.println(high_duration);
+
+      Serial.print(" low duration = ");
+      Serial.println(low_duration);
+
+      Serial.print(" rpm = ");
+      Serial.println(rpm);
+
+      low_duration = 500000;
+      high_duration = 500000;
+      rpm = 30000000 / (low_duration + high_duration); // two puses per second
+
+      Serial.print(" rpm = ");
+      Serial.println(rpm);
+     }
+    return rpm;
 }
 
 void openDrain(byte pin, bool value)
@@ -353,6 +397,7 @@ void print_fan_statistics() {
 
   return;
 }
+
 #define HISTORY_ARRAY_SIZE 10
 
 float average(int *array, int len) {
