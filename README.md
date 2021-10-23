@@ -175,6 +175,14 @@ Also realized that the minimum speed of 0 doesn't work well when the computer is
 
 I can't seem to get SDA /SCL reading the fan tach signal correctly - tried pulling them high with another 10kohm resistor, as well as different configurations (didn't try a pull down resistor though).  I ended up posting the question to reddit as it's beyond my level of understanding
 
+## Sat Oct 23 2021
+This week did  lot of work - finished the hardware design up to a prototype design - still need to run all the tests on it.
+
+Software wise, converted the interrupt based aproach to a pooling one.  That allowed me to move pins for the fan RPM to better suit the design.  Also added an averaging function to smooth out some of the ripples in idrac/computer PWM detection.
+
+Next up will be some serious testing of both the prototype in the server but also the pcb design before that's sent off for manufacturing.
+
+Also probably need to revisit documentation for the project too.
 
 # Making cable tips.
 Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
@@ -197,7 +205,7 @@ https://www.reddit.com/r/homelab/comments/8wbogx/my_attempt_at_creating_a_circui
 https://www.reddit.com/r/homelab/comments/beuks5/silencing_the_hp_dl380_for_good/
 
 Setting the interrupt priority: https://www.youtube.com/watch?v=H3o08WE0zEI
-
+Delta Fan Datasheet for similar fan: https://www.mouser.com/datasheet/2/632/dele_s_a0011169984_1-2290125.pdf
 https://homeservershow.com/forums/topic/7294-faking-the-fan-signal/
 
 https://forum.arduino.cc/t/problem-measuring-4-pin-fan-rpm/666804/6
