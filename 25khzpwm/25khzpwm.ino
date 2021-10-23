@@ -8,9 +8,11 @@
 
 const unsigned int NUMBER_OF_FANS = 6;
 
+#define HISTORY_ARRAY_SIZE 5
+
 // Pins to communiate with fan.
 const int fan_pwm_pin_output[NUMBER_OF_FANS] = {8,7,6,46,45,44};     // Blue Wire.  Uses PWM registers and output   TODO: CHANGE PIN 11 to 44
-const int fan_tach_pin_input[NUMBER_OF_FANS] = {3,2,18,19,20,21};      // Yellow Wire. Uses digital interrupts TODO: 20 and 21 don't work because of the internal 10k pullup
+const int fan_tach_pin_input[NUMBER_OF_FANS] = {11,10,9,15,16,17};      // Yellow Wire.
 
 // Pins to communicate back to computer.
 const int computer_pwm_input[NUMBER_OF_FANS] = {54,56,58,60,63,68};     // Blue Wire. uses pulseIn to read a sample pwm length
@@ -45,7 +47,7 @@ const unsigned int max_rpm = 320;
 
 // Main datastructure for storing fan variables
 struct fan_variable_structure {
-  unsigned int idrac_pwm_percent_request;       // Read: what fan speed is idrac requesting
+  unsigned int idrac_pwm_percent_request[HISTORY_ARRAY_SIZE];       // Read: what fan speed is idrac requesting
   unsigned int idrac_rpm;                       // Var: desired rpm to generate for idrac
   
   unsigned long idrac_tach_increment;           // Var: the increment used for timing how often we need to pulse
@@ -54,7 +56,6 @@ struct fan_variable_structure {
 
   unsigned int fan_pwm_percent;                 // Write: output of the fan map that we send to the real fan
   unsigned int  fan_rpm;                        // Read: current RPM of the fan
-  volatile unsigned int  fan_rpm_interrupt_count = 0;    // Var: how many interrupts do we get on the fan_tach_pin_input fan per cycle
 };
 
 fan_variable_structure fan[NUMBER_OF_FANS];
@@ -146,13 +147,6 @@ void setup() {
   pinMode(SDA, INPUT);
   pinMode(SCL, INPUT);
 
-  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[0]), fan0counter, RISING); // yellow wire
-  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[1]), fan1counter, RISING); // yellow wire
-  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[2]), fan2counter, RISING); // yellow wire
-  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[3]), fan3counter, RISING); // yellow wire
-  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[4]), fan4counter, RISING); // yellow wire
-  attachInterrupt(digitalPinToInterrupt(fan_tach_pin_input[5]), fan5counter, RISING); // yellow wire
-
   Serial.println("Starting up...");
   
   OCR4C = fan[0].fan_pwm_percent*320 / 100;
@@ -194,21 +188,17 @@ void loop() {
 
     for (int i=0; i< NUMBER_OF_FANS;i++) {
       // Measure Fan RPM
-      fan[i].fan_rpm = pulses_per_time_to_rpm(fan[i].fan_rpm_interrupt_count, duration);
+      fan[i].fan_rpm = read_fan_speed_in_rpm(fan_tach_pin_input[i]);
 
-      if (i==0) {
-        Serial.println("orig= ");
-        Serial.println(fan[0].fan_rpm);
-        fan[0].fan_rpm = read_fan_speed_in_rpm(fan_tach_pin_input[0]);
-      }
       // Read Requested PWM %
-      fan[i].idrac_pwm_percent_request = read_idrac_pwm_value_in_percentage (computer_pwm_input[i]);
+      insert(fan[i].idrac_pwm_percent_request, read_idrac_pwm_value_in_percentage (computer_pwm_input[i]));
 
       // Map idrac PWM % request to what we want fan PWM % to be
-      fan[i].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(fan[i].idrac_pwm_percent_request);
+      unsigned long av = average(fan[i].idrac_pwm_percent_request); 
+      fan[i].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(av);
 
       // Update RPM and tach that we want to generate for idrac
-      fan[i].idrac_rpm = map_idrac_rpm_based_from_pwm(fan[i].idrac_pwm_percent_request);                  // pass through fan RPM.
+      fan[i].idrac_rpm = map_idrac_rpm_based_from_pwm(av);                  // pass through fan RPM.
       fan[i].idrac_tach_increment= calculate_idrac_tach_pwm_based_on_actual_fan_pwm(fan[i].idrac_rpm);    // calculate tach increment for desired fanspeed.
       fan[i].idrac_start_time_micros = micros();                                                          // reset tach timer
     }
@@ -226,36 +216,9 @@ void loop() {
     }
 
     startTime = millis();
-    for (int i=0; i< NUMBER_OF_FANS;i++) {
-      fan[i].fan_rpm_interrupt_count = 0 ;
-    }
   }
 
   ++loopcounter;
-}
-
-void fan0counter() {
-  fan[0].fan_rpm_interrupt_count++;
-}
-
-void fan1counter() {
-  fan[1].fan_rpm_interrupt_count++;
-}
-
-void fan2counter() {
-  fan[2].fan_rpm_interrupt_count++;
-}
-
-void fan3counter() {
-  fan[3].fan_rpm_interrupt_count++;
-}
-
-void fan4counter() {
-  fan[4].fan_rpm_interrupt_count++;
-}
-
-void fan5counter() {
-  fan[5].fan_rpm_interrupt_count++;
 }
 
 // pulses occur twice every rotation
@@ -300,22 +263,14 @@ unsigned int read_idrac_pwm_value_in_percentage (unsigned int pin) {
 unsigned int read_fan_speed_in_rpm(unsigned int pin) {
    unsigned long high_duration, low_duration, rpm;
 
-    high_duration = pulseIn(pin, HIGH, 400);
-    low_duration = pulseIn(pin, LOW, 400);
-
-    if((low_duration + high_duration) == 0)  {
-      int var = digitalRead(pin);
-//      if(var == LOW) {
-        return 0;
- //       } else {
-        return 100;
-  //      }
-      }
-
+    high_duration = pulseIn(pin, HIGH, 100000);
+    low_duration = pulseIn(pin, LOW,   100000);
     rpm = 30000000 / (low_duration + high_duration); // two puses per second
 
-    if(1) {  // debug flag
+    if(0) {  // debug flag
       Serial.println();
+      Serial.print(" pin = ");
+      Serial.println(pin);
       Serial.print(" highduration = ");
       Serial.println(high_duration);
 
@@ -324,10 +279,6 @@ unsigned int read_fan_speed_in_rpm(unsigned int pin) {
 
       Serial.print(" rpm = ");
       Serial.println(rpm);
-
-      low_duration = 500000;
-      high_duration = 500000;
-      rpm = 30000000 / (low_duration + high_duration); // two puses per second
 
       Serial.print(" rpm = ");
       Serial.println(rpm);
@@ -388,26 +339,23 @@ void print_fan_statistics() {
   char buffer[256];
   
   for (int i=0; i< NUMBER_OF_FANS; i++) {
-    sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwm_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
-    sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwm_percent_request, fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
+    //sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwm_percent_request[0], fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
+    sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwm_percent_request[0], fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     Serial.println(buffer);
-
   }
   Serial.println();
 
   return;
 }
 
-#define HISTORY_ARRAY_SIZE 10
+unsigned long average(int *array) {
+  unsigned long average=0;
 
-float average(int *array, int len) {
-  float average=0.0;
-
-  for (int i=0;i <len;i++)  {
-    average +=(float)array[i];
+  for (int i=0;i <HISTORY_ARRAY_SIZE;i++)  {
+    average +=array[i];
   }
+  average=average/HISTORY_ARRAY_SIZE;
 
-  average=average/len;
   return average;
 }
 
