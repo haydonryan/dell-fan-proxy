@@ -350,12 +350,6 @@ Wire Wire Line
 Wire Wire Line
 	10400 1650 10150 1650
 Wire Wire Line
-	10150 1750 10400 1750
-Wire Wire Line
-	10150 1850 10400 1850
-Wire Wire Line
-	10400 1950 10150 1950
-Wire Wire Line
 	10400 2500 10150 2500
 Wire Wire Line
 	10150 2600 10400 2600
@@ -369,12 +363,6 @@ Wire Wire Line
 	8900 3550 9350 3550
 Wire Wire Line
 	10400 3250 10150 3250
-Wire Wire Line
-	10150 3350 10400 3350
-Wire Wire Line
-	10400 3450 10150 3450
-Wire Wire Line
-	10150 3550 10400 3550
 Wire Wire Line
 	10200 4850 10200 4650
 Wire Wire Line
@@ -847,17 +835,17 @@ Text GLabel 8750 3450 0    50   Input ~ 0
 PC5_TACH
 Text GLabel 8750 3950 0    50   Input ~ 0
 PC6_TACH
-Text GLabel 10750 2700 2    50   Input ~ 0
+Text GLabel 10750 1750 2    50   Input ~ 0
 FAN1_TACH
-Text GLabel 10750 2800 2    50   Input ~ 0
+Text GLabel 10750 1850 2    50   Input ~ 0
 FAN2_TACH
-Text GLabel 10800 3650 2    50   Input ~ 0
+Text GLabel 10750 1950 2    50   Input ~ 0
 FAN3_TACH
-Text GLabel 10800 3750 2    50   Input ~ 0
+Text GLabel 10800 3350 2    50   Input ~ 0
 FAN4_TACH
-Text GLabel 10800 3850 2    50   Input ~ 0
+Text GLabel 10800 3450 2    50   Input ~ 0
 FAN5_TACH
-Text GLabel 10800 3950 2    50   Input ~ 0
+Text GLabel 10800 3550 2    50   Input ~ 0
 FAN6_TACH
 Text GLabel 10750 2300 2    50   Input ~ 0
 FAN2_PWM
@@ -1486,7 +1474,7 @@ Wire Wire Line
 Wire Wire Line
 	2800 3600 2950 3600
 Text Notes 10700 7650 0    50   ~ 0
-0.69
+1.0
 Wire Wire Line
 	10500 4450 10500 4850
 Text GLabel 8750 3850 0    50   Input ~ 0
@@ -1930,4 +1918,16 @@ Wire Wire Line
 	8750 3450 9350 3450
 Wire Wire Line
 	8750 3650 9350 3650
+Wire Wire Line
+	10150 3350 10800 3350
+Wire Wire Line
+	10150 3450 10800 3450
+Wire Wire Line
+	10150 3550 10800 3550
+Wire Wire Line
+	10150 1750 10750 1750
+Wire Wire Line
+	10150 1850 10750 1850
+Wire Wire Line
+	10150 1950 10750 1950
 $EndSCHEMATC
