@@ -184,6 +184,14 @@ Next up will be some serious testing of both the prototype in the server but als
 
 Also probably need to revisit documentation for the project too.
 
+## Tue Dec 14 11:12:08 2021 
+Prototype build notes: 
+- Hard to tell which is what fan for power pads label better
+  - especially annoying as fan 1 is on the bottom. 
+- Resistors need longer pads
+- Some of the labels aren't visible after populating the pad (sockets)
+
+
 # Making cable tips.
 Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
 Cut the termianl off the tape but leave the small bit of tape on for hodling it steady.
