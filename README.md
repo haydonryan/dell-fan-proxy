@@ -191,6 +191,12 @@ Prototype build notes:
 - Resistors need longer pads
 - Some of the labels aren't visible after populating the pad (sockets)
 
+## Fri Dec 24 17:39:38 2021 
+Blew up the server fan chip and Dell had to replace the motherboard.  On the Fan5 connector (arduino side) found a flyaway filliament on the 12v line.. That could have been the issue, OR maybe it's a common ground issue that I shouldn't be running a common ground on the board.  Either way the danger factor is really freaking me out. Don't want to kill another server board.
+
+Pretty sure the 12v cable was the thing that killed the motherboard - rogue fly away.
+
+TLDR - make sure the connector crimps the cable and the insulation.  The cable I have has thick insulation which makes putting the wire into the slots dificult.  
 
 # Making cable tips.
 Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
