@@ -198,10 +198,24 @@ Pretty sure the 12v cable was the thing that killed the motherboard - rogue fly 
 
 TLDR - make sure the connector crimps the cable and the insulation.  The cable I have has thick insulation which makes putting the wire into the slots dificult.
 
+
+## Fri Dec 31 11:26:19 2021
+Checked the continuity - on the new server board - there's a common 12v rail AND common 12v ground.  This means that I can easily check the fan project using the bench power supply.
+
+Sucessfully tested 6 fans on the lab bench supply.  I think my issue was definitely bad crimping.
+
+## Tue Jan 04 09:44:55 2022
+The board has now been running in the server for over 24 hours straight now in the server. I had one initial issue with fans loosing redundancy, but other than that it's been working really well.  The issue I had was definitely 12v power going to the tach line.
+
 # Making cable tips.
 Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
 Cut the termianl off the tape but leave the small bit of tape on for hodling it steady.
 put the termianl into the 1.3mm crimp size first all the way up to the tape - it should hold iself in there - making it easier to feed in the cable(s).
+
+Make sure to crimp the actual insulation.
+
+https://www.youtube.com/watch?v=Ta55NTSBLN0
+
 
 Do the dual power lead crimp first (it's the hardest)
 
