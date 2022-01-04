@@ -49,7 +49,7 @@ const unsigned int max_rpm = 320;
 struct fan_variable_structure {
   unsigned int idrac_pwm_percent_request[HISTORY_ARRAY_SIZE];       // Read: what fan speed is idrac requesting
   unsigned int idrac_rpm;                       // Var: desired rpm to generate for idrac
-  
+
   unsigned long idrac_tach_increment;           // Var: the increment used for timing how often we need to pulse
   unsigned long idrac_start_time_micros;        // Var: last tick start time
   bool idrac_tach_open_drain_toggle;            // Var: state of open drain
@@ -96,7 +96,7 @@ unsigned int calculate_idrac_tach_pwm_based_on_actual_fan_pwm (unsigned int inpu
 ///////////////////////////////////////////////////////////////////////////
 //
 //  SETUP
-// 
+//
 ///////////////////////////////////////////////////////////////////////////
 
 // https://www.robotshop.com/community/forum/t/arduino-101-timers-and-interrupts/13072
@@ -143,12 +143,12 @@ void setup() {
   Serial.begin(115200);
   loopcounter = 0;
 
-  // Disable i2C as pins 20 and 21 use it. 
+  // Disable i2C as pins 20 and 21 use it.
   pinMode(SDA, INPUT);
   pinMode(SCL, INPUT);
 
   Serial.println("Starting up...");
-  
+
   OCR4C = fan[0].fan_pwm_percent*320 / 100;
   OCR4B = fan[2].fan_pwm_percent*320 / 100;
   OCR4A = fan[3].fan_pwm_percent*320 / 100;
@@ -161,7 +161,7 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////
 //
 //  LOOP
-// 
+//
 ///////////////////////////////////////////////////////////////////////////
 
 void loop() {
@@ -171,7 +171,7 @@ void loop() {
 
   //////////////////////////////////////////////////////
   // Toggle open drain based on the desired frequency
-  // 
+  //
   for (int i=0; i< NUMBER_OF_FANS;i++) {
     duration = (current_time_in_micros - fan[i].idrac_start_time_micros);
     if ( duration > fan[i].idrac_tach_increment) {  // toggle based on rpm
@@ -183,7 +183,7 @@ void loop() {
 
   //////////////////////////////////////////////////////
   // Once per second read the fan speed and print stats
-  // 
+  //
   if ((duration = millis() - startTime) > 1000) {  // update once per second
 
     for (int i=0; i< NUMBER_OF_FANS;i++) {
@@ -194,7 +194,7 @@ void loop() {
       insert(fan[i].idrac_pwm_percent_request, read_idrac_pwm_value_in_percentage (computer_pwm_input[i]));
 
       // Map idrac PWM % request to what we want fan PWM % to be
-      unsigned long av = average(fan[i].idrac_pwm_percent_request); 
+      unsigned long av = average(fan[i].idrac_pwm_percent_request);
       fan[i].fan_pwm_percent =  map_fan_curve_pwm_based_on_input_pwm(av);
 
       // Update RPM and tach that we want to generate for idrac
@@ -296,7 +296,7 @@ void openDrain(byte pin, bool value)
   }
 }
 
-const unsigned int MAX_RPM_MAP_POINTS = 11; 
+const unsigned int MAX_RPM_MAP_POINTS = 11;
 
 unsigned int rpm_map[MAX_RPM_MAP_POINTS][2] =
 { {0, 0},    // leave as {0,0}
@@ -337,7 +337,7 @@ unsigned int map_idrac_rpm_based_from_pwm(unsigned int input_pwm ) {
 
 void print_fan_statistics() {
   char buffer[256];
-  
+
   for (int i=0; i< NUMBER_OF_FANS; i++) {
     //sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwm_percent_request[0], fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
     sprintf(buffer, "Fan [%u] idrac: (%u%%, %u rpm) fan: (%u%%, %u rpm)", i,  fan[i].idrac_pwm_percent_request[0], fan[i].idrac_rpm, fan[i].fan_pwm_percent, fan[i].fan_rpm);
