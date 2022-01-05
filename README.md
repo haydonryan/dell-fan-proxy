@@ -207,6 +207,18 @@ Sucessfully tested 6 fans on the lab bench supply.  I think my issue was definit
 ## Tue Jan 04 09:44:55 2022
 The board has now been running in the server for over 24 hours straight now in the server. I had one initial issue with fans loosing redundancy, but other than that it's been working really well.  The issue I had was definitely 12v power going to the tach line.
 
+## Wed Jan 05 01:42:36 2022
+Did a full revised design today - swapped the position of the fans and PC connectors to better suit where the board sits and provide slightly less pull on the fan cables.
+
+Also made various improvements:
+- Removing the ground link (common ground so don't need it)
+- making the design more consistent
+- increasing the size of the resistor pads
+- put all text on silk screen
+- moved the vin diode further away from the barrel connector to reduce risk of shorts on badly made board.
+- swapped FAN4 and FAN5 pwm pins for nicer routing.
+
+
 # Making cable tips.
 Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
 Cut the termianl off the tape but leave the small bit of tape on for hodling it steady.
