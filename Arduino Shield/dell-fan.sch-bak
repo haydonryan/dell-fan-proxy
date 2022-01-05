@@ -1474,7 +1474,7 @@ Wire Wire Line
 Wire Wire Line
 	2800 3600 2950 3600
 Text Notes 10700 7650 0    50   ~ 0
-0.69
+1.0
 Wire Wire Line
 	10500 4450 10500 4850
 Text GLabel 8750 3850 0    50   Input ~ 0

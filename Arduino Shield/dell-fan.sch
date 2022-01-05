@@ -335,8 +335,6 @@ Wire Wire Line
 Wire Wire Line
 	9100 1800 9100 1900
 Wire Wire Line
-	9100 1900 8600 1900
-Wire Wire Line
 	9200 1900 9100 1900
 Connection ~ 9100 1900
 Wire Wire Line
@@ -1528,7 +1526,7 @@ Wire Wire Line
 Wire Wire Line
 	10150 3950 10800 3950
 $Comp
-L dk_Rectangular-Connectors-Headers-Male-Pins:67996-412HLF J1
+L dell-fan-rescue:67996-412HLF-dk_Rectangular-Connectors-Headers-Male-Pins J1
 U 1 1 624413EB
 P 7350 1150
 F 0 "J1" H 7350 1597 60  0000 C CNN
@@ -1834,24 +1832,6 @@ Text Notes 3850 4750 0    50   ~ 0
 Loopback
 Text Notes 5300 4750 0    50   ~ 0
 Loopback
-$Comp
-L Connector:Conn_01x01_Male GND_LNK1
-U 1 1 617EF8EC
-P 7750 1800
-F 0 "GND_LNK1" H 7858 1981 50  0000 C CNN
-F 1 "GND" H 7858 1890 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 7750 1800 50  0001 C CNN
-F 3 "~" H 7750 1800 50  0001 C CNN
-	1    7750 1800
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8600 1900 8600 1800
-Wire Wire Line
-	8600 1800 7950 1800
-Connection ~ 8600 1900
-Wire Wire Line
-	8600 1900 8550 1900
 Text GLabel 1900 4550 2    50   Input ~ 0
 FAN1_TACH_IN
 Text GLabel 3350 4600 2    50   Input ~ 0
@@ -1930,4 +1910,6 @@ Wire Wire Line
 	10150 1850 10750 1850
 Wire Wire Line
 	10150 1950 10750 1950
+Wire Wire Line
+	8550 1900 9100 1900
 $EndSCHEMATC

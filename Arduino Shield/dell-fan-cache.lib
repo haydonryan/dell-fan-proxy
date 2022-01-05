@@ -1,23 +1,6 @@
 EESchema-LIBRARY Version 2.4
 #encoding utf-8
 #
-# Connector_Conn_01x01_Male
-#
-DEF Connector_Conn_01x01_Male J 0 40 Y N 1 F N
-F0 "J" 0 100 50 H V C CNN
-F1 "Connector_Conn_01x01_Male" 0 -100 50 H V C CNN
-F2 "" 0 0 50 H I C CNN
-F3 "" 0 0 50 H I C CNN
-$FPLIST
- Connector*:*
-$ENDFPLIST
-DRAW
-S 34 5 0 -5 1 1 6 F
-P 2 1 1 6 50 0 34 0 N
-X Pin_1 1 200 0 150 L 50 50 1 1 P
-ENDDRAW
-ENDDEF
-#
 # Connector_Conn_01x04_Male
 #
 DEF Connector_Conn_01x04_Male J 0 40 Y N 1 F N
@@ -284,11 +267,11 @@ X ~ 2 0 -150 50 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# dk_Rectangular-Connectors-Headers-Male-Pins_67996-412HLF
+# dell-fan-rescue_67996-412HLF-dk_Rectangular-Connectors-Headers-Male-Pins
 #
-DEF dk_Rectangular-Connectors-Headers-Male-Pins_67996-412HLF J 0 40 Y Y 1 F N
+DEF dell-fan-rescue_67996-412HLF-dk_Rectangular-Connectors-Headers-Male-Pins J 0 40 Y Y 1 F N
 F0 "J" 0 300 60 H V C CNN
-F1 "dk_Rectangular-Connectors-Headers-Male-Pins_67996-412HLF" 0 400 60 H V C CNN
+F1 "dell-fan-rescue_67996-412HLF-dk_Rectangular-Connectors-Headers-Male-Pins" 0 400 60 H V C CNN
 F2 "digikey-footprints:PinHeader_6x2_P2.54mm_Vertical" 200 200 60 H I L CNN
 F3 "https://cdn.amphenol-icc.com/media/wysiwyg/files/drawing/67996.pdf" 200 300 60 H I L CNN
 F4 "609-3219-ND" 200 400 60 H I L CNN "Digi-Key_PN"
