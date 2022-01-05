@@ -11,7 +11,7 @@ const unsigned int NUMBER_OF_FANS = 6;
 #define HISTORY_ARRAY_SIZE 5
 
 // Pins to communiate with fan.
-const int fan_pwm_pin_output[NUMBER_OF_FANS] = {8,7,6,46,45,44};     // Blue Wire.  Uses PWM registers and output   TODO: CHANGE PIN 11 to 44
+const int fan_pwm_pin_output[NUMBER_OF_FANS] = {8,7,6,45,46,44};     // Blue Wire.  Uses PWM registers and output
 const int fan_tach_pin_input[NUMBER_OF_FANS] = {11,10,9,15,16,17};      // Yellow Wire.
 
 // Pins to communicate back to computer.
@@ -152,8 +152,8 @@ void setup() {
   OCR4C = fan[0].fan_pwm_percent*320 / 100;
   OCR4B = fan[1].fan_pwm_percent*320 / 100;
   OCR4A = fan[2].fan_pwm_percent*320 / 100;
-  OCR5A = fan[3].fan_pwm_percent*320 / 100;
-  OCR5B = fan[4].fan_pwm_percent*320 / 100;
+  OCR5B = fan[3].fan_pwm_percent*320 / 100;
+  OCR5A = fan[4].fan_pwm_percent*320 / 100;
   OCR5C = fan[5].fan_pwm_percent*320 / 100;
 
 }
@@ -206,8 +206,8 @@ void loop() {
     OCR4C = fan[0].fan_pwm_percent*320 / 100;
     OCR4B = fan[1].fan_pwm_percent*320 / 100;
     OCR4A = fan[2].fan_pwm_percent*320 / 100;
-    OCR5A = fan[3].fan_pwm_percent*320 / 100;
-    OCR5B = fan[4].fan_pwm_percent*320 / 100;
+    OCR5B = fan[3].fan_pwm_percent*320 / 100;
+    OCR5A = fan[4].fan_pwm_percent*320 / 100;
     OCR5C = fan[5].fan_pwm_percent*320 / 100;
 
 

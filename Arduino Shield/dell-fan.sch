@@ -849,9 +849,9 @@ Text GLabel 10750 2300 2    50   Input ~ 0
 FAN2_PWM
 Text GLabel 10750 2400 2    50   Input ~ 0
 FAN3_PWM
-Text GLabel 9300 4500 1    50   Input ~ 0
-FAN4_PWM
 Text GLabel 9400 5750 3    50   Input ~ 0
+FAN4_PWM
+Text GLabel 9300 4500 1    50   Input ~ 0
 FAN5_PWM
 $Comp
 L Device:R_US R9
