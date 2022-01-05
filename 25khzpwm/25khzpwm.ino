@@ -150,8 +150,8 @@ void setup() {
   Serial.println("Starting up...");
 
   OCR4C = fan[0].fan_pwm_percent*320 / 100;
-  OCR4B = fan[2].fan_pwm_percent*320 / 100;
-  OCR4A = fan[3].fan_pwm_percent*320 / 100;
+  OCR4B = fan[1].fan_pwm_percent*320 / 100;
+  OCR4A = fan[2].fan_pwm_percent*320 / 100;
   OCR5A = fan[3].fan_pwm_percent*320 / 100;
   OCR5B = fan[4].fan_pwm_percent*320 / 100;
   OCR5C = fan[5].fan_pwm_percent*320 / 100;
@@ -204,8 +204,8 @@ void loop() {
     }
 
     OCR4C = fan[0].fan_pwm_percent*320 / 100;
-    OCR4B = fan[2].fan_pwm_percent*320 / 100;
-    OCR4A = fan[3].fan_pwm_percent*320 / 100;
+    OCR4B = fan[1].fan_pwm_percent*320 / 100;
+    OCR4A = fan[2].fan_pwm_percent*320 / 100;
     OCR5A = fan[3].fan_pwm_percent*320 / 100;
     OCR5B = fan[4].fan_pwm_percent*320 / 100;
     OCR5C = fan[5].fan_pwm_percent*320 / 100;
