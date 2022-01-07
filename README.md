@@ -4,16 +4,16 @@
 For R7515, R540 non hot swap fans.
 
 # Background
-I run an R7515 in my homelab. It's in a separate room upstairs (from my office) with the door open, I can hear it from my office downstairs.  It makes the room unuseable that it sits in, for anyhting else but storage.
+I run an R7515 in my homelab. It's in a separate room upstairs (from my office) with the door open, I can hear it from my office downstairs.  It makes the room unusable that it sits in, for anything else but storage.
 
 At 43% FAN, I can barely hear it from downstairs, 35% is really not too bad, up close.
 
-Looking into it, I've got some non dell hardware( like many others do in homelabs) that the idrac controller doesn't konw how to talk to.  So the idrac just ramps the fans up to compensate for that one device.
+Looking into it, I've got some non dell hardware( like many others do in homelabs) that the idrac controller doesn't know how to talk to.  So the idrac just ramps the fans up to compensate for that one device.
 
 I also noticed that at idle (which the machine sits 90% of the time) there is a 3 degree C differential between inlet and outlet temp, with the cpu being nice and cool.
 
 # Why
-Dell support told me I'm not using the server for it's usecase (Datacetner usage) - They're correct.
+Dell support told me I'm not using the server for it's usecase (Datacenter usage) - They're correct.
 Don't want to modify the firmware (it's signed anyways)
 Thought this would be an interesting project tom get more into electronics and control boards.
 
@@ -24,7 +24,7 @@ Will void your warranty
 Could cause your server to overheat
 Improper connection of fans can short out your motherboard!!!
 
-No responsiblility taken for damaged hardware, loss of income, etc.
+No responsibility taken for damaged hardware, loss of income, etc.
 
 
 
@@ -76,7 +76,7 @@ Connected the server fan up to the test bench and using a 10k pullup resistor go
 
 555hz at full speed
 12.2v (same voltage as vcc)
-The pullup resister can be placed on VCC of the arduino insted, and that tthen will pull it up to 5v in stead.
+The pullup resister can be placed on VCC of the arduino instead, and that then will pull it up to 5v in stead.
 https://linustechtips.com/topic/1016644-arduino-hall-sensor-pull-up-resistor/
 
 https://www.youtube.com/watch?v=YBNEXWp-gf0 Found this great video on high frequency Arduino PWM signals
@@ -115,7 +115,7 @@ pin 9 blue
 arduino -> resistor
 pin 2 - purple
 
-There are different ways of reading the PWM signal from the computer. Because PWM is 25khz and in theory shouldn't change often - doing a blocking pulseIn seems to be ok.  This way we avoid using interrupts that we're using for checking the fan RPM.
+There are different ways of reading the PWM signal from the computer. Because PWM is 25khz and in theory should not change often - doing a blocking pulseIn seems to be ok.  This way we avoid using interrupts that we're using for checking the fan RPM.
 
 18000rpm = 300rps. Two ticks per rotation, gives 600hz
 Max fan speeds at 100%  (tested in idrac) 16920, 16920, 16800, 17040,16920 rpm
@@ -126,7 +126,7 @@ Today I got to the milestone of intercepting the fan signal from my desktop and 
 Next up is to make some harnesses and test with one fan in the server.
 
 ## September 7 2021
-Decided to go the route of migrating the code to the atmega board.  Created a makefile and helper script to use the command line insted of the GUI.  Google tests for some of the code would be an interesting exercise too.
+Decided to go the route of migrating the code to the atmega board.  Created a makefile and helper script to use the command line instead of the GUI.  Google tests for some of the code would be an interesting exercise too.
 
 Next up I'm going to expand this to 6 channels on the board before testing in the server.  I've also started thinking what the actual hardware solution would look like if I made a PCB.
 
@@ -173,12 +173,12 @@ Tested the fan project in the server last night - and it worked really well. Nex
 Was able to plug the fan project in and use VIN to power the arduino.  I did notice that power was going back into the computer though via the VIN when the usb was plugged into my laptop. Looks like I need a 1N4000 family diode to stop current going back into the computer from the arduino.  I have a bunch of 1N4007 in one of the starter kits.
 Also realized that the minimum speed of 0 doesn't work well when the computer is off but IDRAC is on, so I changed the minimum speed to 20% this seems to work nicely with it off, and on - provides a reasonable amount of air, while not being super loud.
 
-I can't seem to get SDA /SCL reading the fan tach signal correctly - tried pulling them high with another 10kohm resistor, as well as different configurations (didn't try a pull down resistor though).  I ended up posting the question to reddit as it's beyond my level of understanding
+I can't seem to get SDA /SCL reading the fan tach signal correctly - tried pulling them high with another 10k ohm resistor, as well as different configurations (didn't try a pull down resistor though).  I ended up posting the question to reddit as it's beyond my level of understanding
 
 ## Sat Oct 23 2021
 This week did  lot of work - finished the hardware design up to a prototype design - still need to run all the tests on it.
 
-Software wise, converted the interrupt based aproach to a pooling one.  That allowed me to move pins for the fan RPM to better suit the design.  Also added an averaging function to smooth out some of the ripples in idrac/computer PWM detection.
+Software wise, converted the interrupt based approach to a pooling one.  That allowed me to move pins for the fan RPM to better suit the design.  Also added an averaging function to smooth out some of the ripples in idrac/computer PWM detection.
 
 Next up will be some serious testing of both the prototype in the server but also the pcb design before that's sent off for manufacturing.
 
@@ -192,17 +192,17 @@ Prototype build notes:
 - Some of the labels aren't visible after populating the pad (sockets)
 
 ## Fri Dec 24 17:39:38 2021
-Blew up the server fan chip and Dell had to replace the motherboard.  On the Fan5 connector (arduino side) found a flyaway filliament on the 12v line.. That could have been the issue, OR maybe it's a common ground issue that I shouldn't be running a common ground on the board.  Either way the danger factor is really freaking me out. Don't want to kill another server board.
+Blew up the server fan chip and Dell had to replace the motherboard.  On the Fan5 connector (arduino side) found a flyaway filament on the 12v line.. That could have been the issue, OR maybe it's a common ground issue that I shouldn't be running a common ground on the board.  Either way the danger factor is really freaking me out. Don't want to kill another server board.
 
 Pretty sure the 12v cable was the thing that killed the motherboard - rogue fly away.
 
-TLDR - make sure the connector crimps the cable and the insulation.  The cable I have has thick insulation which makes putting the wire into the slots dificult.
+TLDR - make sure the connector crimps the cable and the insulation.  The cable I have has thick insulation which makes putting the wire into the slots difficult.
 
 
 ## Fri Dec 31 11:26:19 2021
 Checked the continuity - on the new server board - there's a common 12v rail AND common 12v ground.  This means that I can easily check the fan project using the bench power supply.
 
-Sucessfully tested 6 fans on the lab bench supply.  I think my issue was definitely bad crimping.
+Successfully tested 6 fans on the lab bench supply.  I think my issue was definitely bad crimping.
 
 ## Tue Jan 04 09:44:55 2022
 The board has now been running in the server for over 24 hours straight now in the server. I had one initial issue with fans loosing redundancy, but other than that it's been working really well.  The issue I had was definitely 12v power going to the tach line.
@@ -218,11 +218,15 @@ Also made various improvements:
 - moved the vin diode further away from the barrel connector to reduce risk of shorts on badly made board.
 - swapped FAN4 and FAN5 pwm pins for nicer routing.
 
+## Fri Jan 07 10:14:49 2022
+So far so good on the server. Printed U shaped spacers to save the cables for fans 1-3.  Definitely prefer to do this over not having anything pushing the top up.
+
+I did find that only fan 3 has 12v power when powered off, the rest must be switched somewhere in the motherboard.
 
 # Making cable tips.
 Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
-Cut the termianl off the tape but leave the small bit of tape on for hodling it steady.
-put the termianl into the 1.3mm crimp size first all the way up to the tape - it should hold iself in there - making it easier to feed in the cable(s).
+Cut the terminal off the tape but leave the small bit of tape on for holding it steady.
+put the terminal into the 1.3mm crimp size first all the way up to the tape - it should hold itself in there - making it easier to feed in the cable(s).
 
 Make sure to crimp the actual insulation.
 
