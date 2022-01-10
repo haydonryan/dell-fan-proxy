@@ -13,7 +13,7 @@ Looking into it, I've got some non dell hardware( like many others do in homelab
 I also noticed that at idle (which the machine sits 90% of the time) there is a 3 degree C differential between inlet and outlet temp, with the cpu being nice and cool.
 
 # Why
-Dell support told me I'm not using the server for it's usecase (Datacenter usage) - They're correct.
+Dell support told me I'm not using the server for it's use case (Datacenter usage) - They're correct.
 Don't want to modify the firmware (it's signed anyways)
 Thought this would be an interesting project tom get more into electronics and control boards.
 
@@ -223,13 +223,24 @@ So far so good on the server. Printed U shaped spacers to save the cables for fa
 
 I did find that only fan 3 has 12v power when powered off, the rest must be switched somewhere in the motherboard.
 
+Measured cable lengths today:
+Fan 1 30cm
+Fan 2 26cm
+Fan 3 45cm
+Fan 4 40cm
+Fan 5 35cm
+Fan 6 40cm
+
+Max length shrink tubing at the arduino end: 1-1.5cm
+Had another issue where my cables came apart (there are two spliced to one using electrical tape - need to do much better joins, but this allows me to correct the lengths of the cables more too.
+
 # Making cable tips.
 Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
 Cut the terminal off the tape but leave the small bit of tape on for holding it steady.
 put the terminal into the 1.3mm crimp size first all the way up to the tape - it should hold itself in there - making it easier to feed in the cable(s).
 
 Make sure to crimp the actual insulation.
-
+Don't have the wire come out too far as mounting this, the pins will potentially pus the pin out if there's not enough space.
 https://www.youtube.com/watch?v=Ta55NTSBLN0
 
 
