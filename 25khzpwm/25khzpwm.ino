@@ -25,13 +25,19 @@ const int computer_tach_output[NUMBER_OF_FANS] = {55,57,59,61,64,69};   // Yello
 // Strongly recommend - do not modify the first and last points unless you fully understand what you're doing.
 ///////////////////////////////////////////////////////////////////////////
 
-const unsigned int FAN_MAP_POINTS = 5; // MIN 3 points
+const unsigned int FAN_MAP_POINTS = 11; // MIN 3 points
 
 unsigned int fan_curve_map[FAN_MAP_POINTS][2] =
-{ {0, 20},    // The second number is your absolute minimum speed, for example when the computer is off but idrac fan is still running.
-  {20, 20},
-  {50, 29},
+{ {0, 20},    // For input of zero - the second number is your absolute minimum speed, for example when the computer is off but idrac fan is still running.
+  {10, 30},
+  {20, 30},
+  {30, 30},
+  {40, 30},
+  {50, 30},
+  {60, 30},
+  {70, 30},
   {80, 50},
+  {90, 50},
   {100, 100} // leave as {100,100}
 };
 
