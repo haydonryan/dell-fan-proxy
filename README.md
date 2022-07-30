@@ -234,6 +234,10 @@ Fan 6 40cm
 Max length shrink tubing at the arduino end: 1-1.5cm
 Had another issue where my cables came apart (there are two spliced to one using electrical tape - need to do much better joins, but this allows me to correct the lengths of the cables more too.
 
+# Sun Jul 30 2022
+I've been testing this during summer and noticed that as the inlet temperature approaches the limit "for this configuration" the fans ramp significantly.  This is clearly a preventative reaction rather than a reactive one.  Also ensuring that the hardware that is in the server is "compatilbe" aka listed on the compatabilty matrix certainly helps to reduce the speed of the fans.
+
+
 # Making cable tips.
 Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
 Cut the terminal off the tape but leave the small bit of tape on for holding it steady.
