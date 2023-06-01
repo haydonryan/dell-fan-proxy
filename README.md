@@ -1,30 +1,31 @@
 # Dell Fan controller
+<img src="https://raw.githubusercontent.com/haydonryan/dell-fan-proxy/main/Images/IMG_1392.jpg" width="200" height="400">   <img src="https://raw.githubusercontent.com/haydonryan/dell-fan-proxy/main/Images/IMG_1393.jpg" width="200" height="400">   <img src="https://raw.githubusercontent.com/haydonryan/dell-fan-proxy/main/Images/IMG_1590.jpg" width="200" height="400">   <img src="https://raw.githubusercontent.com/haydonryan/dell-fan-proxy/main/Images/IMG_1591.jpg" width="200" height="400">
 
-
-For R7515, R540 non hot swap fans.
+Arduino Mega Fan Controller Sheild For R7515, R540 non hot swap fans.
 
 # Background
-I run an R7515 in my homelab. It's in a separate room upstairs (from my office) with the door open, I can hear it from my office downstairs.  It makes the room unusable that it sits in, for anything else but storage.
+I run an R7515 in my homelab. It's in a separate room upstairs (from my office) with the door open, I can hear it from my office downstairs.  It makes the room unusable that it sits in.
 
 At 43% FAN, I can barely hear it from downstairs, 35% is really not too bad, up close.
 
-Looking into it, I've got some non dell hardware( like many others do in homelabs) that the idrac controller doesn't know how to talk to.  So the idrac just ramps the fans up to compensate for that one device.
+The minimum fan speed and therefore noise is designed for a datacenter next to other heat generating servers with no noise contstraints, not a room in a house.
+Plus I've got some non dell hardware( like many others do in homelabs) that the idrac controller doesn't know how to talk to, so the idrac just ramps the fans up to compensate for that one device.
 
 I also noticed that at idle (which the machine sits 90% of the time) there is a 3 degree C differential between inlet and outlet temp, with the cpu being nice and cool.
 
 # Why
-Dell support told me I'm not using the server for it's use case (Datacenter usage) - They're correct.
-Don't want to modify the firmware (it's signed anyways)
-Thought this would be an interesting project tom get more into electronics and control boards.
+- Dell support told me I'm not using the server for it's use case (Datacenter usage) - They're correct.
+- Don't want to modify the firmware (it's signed anyways)
+- Thought this would be an interesting project tom get more into electronics and control boards.
 
-As these machines come out of datacenters people are going to want to lab them - let's give them the power to do that!
+- As these machines come out of primary service in datacenters people are going to want to lab them - let's give them the power to do that!
 
 # Disclaimer
-Will void your warranty
-Could cause your server to overheat
-Improper connection of fans can short out your motherboard!!!
+- Will void your warranty
+- Could cause your server to overheat
+- Improper connection of fans can short out your motherboard!!!
 
-No responsibility taken for damaged hardware, loss of income, etc.
+- No responsibility taken for damaged hardware, loss of income, etc.
 
 
 
@@ -46,14 +47,9 @@ No responsibility taken for damaged hardware, loss of income, etc.
   - https://www.mouser.com/ProductDetail/Qualtek/Q2-F-RK4-1-16-11-6IN-39?qs=f6iYHOF0qgRLREW66g%2FPwg%3D%3D&gclid=CjwKCAiA8Jf-BRB-EiwAWDtEGuuEjQNy0toZvRLEwSUv5-1h-9RVMS_Smtxu-MWcHakHl9INQqu-WxoCvIEQAvD_BwE
 
 
-# Log
-
-Want 24 AWG gauge wiring because the fans are rated for 3 amps. And only 24 gauge works with the connectors, and is within spec.   https://www.powerstream.com/Wire_Size.htm
-
-
+# Random bits of information
 
 By measuring and pulling pins out of the fan, I was able to determine that the pins (with the plastic nib up, facing away from you in the order:
-
 ```
 1   2   3
 4   5   6
@@ -68,173 +64,44 @@ That the Wires are:
 5. -| Red - 12v Loopback
 6. Yellow - Sense wire.
 
-I found this forum post from someone who also got delta fans out that were used in a Dell server.
-https://www.eevblog.com/forum/projects/how-do-i-drive-these-delta-fans-with-varying-speed/
-
-## April 12 2021
-Connected the server fan up to the test bench and using a 10k pullup resistor got a nice square waveform that corresponds to the frequency.
-
-555hz at full speed
-12.2v (same voltage as vcc)
-The pullup resister can be placed on VCC of the arduino instead, and that then will pull it up to 5v in stead.
-https://linustechtips.com/topic/1016644-arduino-hall-sensor-pull-up-resistor/
-
-https://www.youtube.com/watch?v=YBNEXWp-gf0 Found this great video on high frequency Arduino PWM signals
-
-
-Connected up and ran the straight output code  and got a max of 16530RPM
-Once I connected the PWM signal and scoped the tach output, I got a ton of noise appearing on the tach line.  This is introducing errors in the count functions.
-
-## April 16 2021
-Low pass filter
-10k ohm resister
-15 farad - not enough filtering
-331= 330pf sweet spot
-104 (100000pf) seriously rounds the square wave.
-
-2200pf lots of noise
-
-Using just a 220 k ohm resister from the signal made the difference ( no capacitor)
-https://forum.arduino.cc/t/controlling-12v-pwm-fan-reading-speed-tach-readout-issues/863076
-
-## August 4 2021
-Did some more research last night on continuing the project.  Found this forum thread: https://forum.arduino.cc/t/problem-measuring-4-pin-fan-rpm/666804/10.
-
-Also realized that I need to refactor the RPM sensing code as it loops and waits for the Tach count to go up - that's not helpful for also trying to output a tach signal back to the computer.  The tach output (when pulled up) is a nice square wave
-
-
-## August 10 2021
-removing the existing wiring from the arduino so I can test PWM input from the computer.
-arduino -> breadboard
-ground (orange) -> ground line
-5v (brown) -> resistor
-
-arduino -> fan
-pin 9 blue
-
-arduino -> resistor
-pin 2 - purple
-
-There are different ways of reading the PWM signal from the computer. Because PWM is 25khz and in theory should not change often - doing a blocking pulseIn seems to be ok.  This way we avoid using interrupts that we're using for checking the fan RPM.
-
-18000rpm = 300rps. Two ticks per rotation, gives 600hz
-Max fan speeds at 100%  (tested in idrac) 16920, 16920, 16800, 17040,16920 rpm
-
-## August 13 2021
-Today I got to the milestone of intercepting the fan signal from my desktop and applying the fan map to it, then using that to run the server fan.  Reading of the fan rpm, along with faking the tach signal back to idrac all works.
-
-Next up is to make some harnesses and test with one fan in the server.
-
-## September 7 2021
-Decided to go the route of migrating the code to the atmega board.  Created a makefile and helper script to use the command line instead of the GUI.  Google tests for some of the code would be an interesting exercise too.
-
-Next up I'm going to expand this to 6 channels on the board before testing in the server.  I've also started thinking what the actual hardware solution would look like if I made a PCB.
-
-
-## September 11 2021
-Expanded the data structures up to 6 fans.
-
-Running into issues around the fan PWM driver - I don't follow how the timers work with PWM signals - so need to do some research on that before continuing.  I guess I could try reading in teh signals that don't require PWM from other pins, but it feels like doing the hardest part first would be smarter.
 Arduino Pin	 Register
-2	OCR3B
-3	OCR3C
-4	OCR4C
-5	OCR3A
-6	OCR4A
-7	OCR4B
-8	OCR4C
-9	OCR2B
-10	OCR2A
-11	OCR1A
-12	OCR1B
-13	OCR0A
-44	OCR5C
-45	OCR5B
-46	OCR5A
+- 2	OCR3B
+- 3	OCR3C
+- 4	OCR4C
+- 5	OCR3A
+- 6	OCR4A
+- 7	OCR4B
+- 8	OCR4C
+- 9	OCR2B
+- 10	OCR2A
+- 11	OCR1A
+- 12	OCR1B
+- 13	OCR0A
+- 44	OCR5C
+- 45	OCR5B
+- 46	OCR5A
 
 source: http://astro.neutral.org/arduino/arduino-pwm-pins-frequency.shtml
-
-## NEXT
-
-https://arduinoinfo.mywikis.net/wiki/Arduino-PWM-Frequency
-
-## Sat Sep 25 2021
-Expanded the program to output on 6 separate PWM channels. Meaning we're getting close to doing some hardware testing.
-Calculated each fan at 100% uses 20W of power. - or 120W for the whole machine.
-
-Pin 20 and 21 for reading the fan tach - works by just wiring the signal pulled high directly in.
-
-I fixed a couple of bugs in the mapping code - it didn't work for a zero value.  Not good, but oh well. Fixed at least.  Should be ready to try the hardware for tomorrow in the server.
-
-## Wed Sep 29 2021
-Tested the fan project in the server last night - and it worked really well. Next up - test with 6 channels populated - meaning that I need to make 5 more adaptors.  I also realized that the external USB doesn't provide power while the motherboard is off, so I might not be able to use that to provide power to the board since one of the central fans spins while the server is off.
-
-## Sat Oct 16 2021
-Was able to plug the fan project in and use VIN to power the arduino.  I did notice that power was going back into the computer though via the VIN when the usb was plugged into my laptop. Looks like I need a 1N4000 family diode to stop current going back into the computer from the arduino.  I have a bunch of 1N4007 in one of the starter kits.
-Also realized that the minimum speed of 0 doesn't work well when the computer is off but IDRAC is on, so I changed the minimum speed to 20% this seems to work nicely with it off, and on - provides a reasonable amount of air, while not being super loud.
-
-I can't seem to get SDA /SCL reading the fan tach signal correctly - tried pulling them high with another 10k ohm resistor, as well as different configurations (didn't try a pull down resistor though).  I ended up posting the question to reddit as it's beyond my level of understanding
-
-## Sat Oct 23 2021
-This week did  lot of work - finished the hardware design up to a prototype design - still need to run all the tests on it.
-
-Software wise, converted the interrupt based approach to a pooling one.  That allowed me to move pins for the fan RPM to better suit the design.  Also added an averaging function to smooth out some of the ripples in idrac/computer PWM detection.
-
-Next up will be some serious testing of both the prototype in the server but also the pcb design before that's sent off for manufacturing.
-
-Also probably need to revisit documentation for the project too.
-
-## Tue Dec 14 11:12:08 2021
-Prototype build notes:
-- Hard to tell which is what fan for power pads label better
-  - especially annoying as fan 1 is on the bottom.
-- Resistors need longer pads
-- Some of the labels aren't visible after populating the pad (sockets)
-
-## Fri Dec 24 17:39:38 2021
-Blew up the server fan chip and Dell had to replace the motherboard.  On the Fan5 connector (arduino side) found a flyaway filament on the 12v line.. That could have been the issue, OR maybe it's a common ground issue that I shouldn't be running a common ground on the board.  Either way the danger factor is really freaking me out. Don't want to kill another server board.
-
-Pretty sure the 12v cable was the thing that killed the motherboard - rogue fly away.
-
-TLDR - make sure the connector crimps the cable and the insulation.  The cable I have has thick insulation which makes putting the wire into the slots difficult.
 
 
 ## Fri Dec 31 11:26:19 2021
 Checked the continuity - on the new server board - there's a common 12v rail AND common 12v ground.  This means that I can easily check the fan project using the bench power supply.
 
-Successfully tested 6 fans on the lab bench supply.  I think my issue was definitely bad crimping.
-
-## Tue Jan 04 09:44:55 2022
-The board has now been running in the server for over 24 hours straight now in the server. I had one initial issue with fans loosing redundancy, but other than that it's been working really well.  The issue I had was definitely 12v power going to the tach line.
-
-## Wed Jan 05 01:42:36 2022
-Did a full revised design today - swapped the position of the fans and PC connectors to better suit where the board sits and provide slightly less pull on the fan cables.
-
-Also made various improvements:
-- Removing the ground link (common ground so don't need it)
-- making the design more consistent
-- increasing the size of the resistor pads
-- put all text on silk screen
-- moved the vin diode further away from the barrel connector to reduce risk of shorts on badly made board.
-- swapped FAN4 and FAN5 pwm pins for nicer routing.
-
-## Fri Jan 07 10:14:49 2022
 So far so good on the server. Printed U shaped spacers to save the cables for fans 1-3.  Definitely prefer to do this over not having anything pushing the top up.
 
 I did find that only fan 3 has 12v power when powered off, the rest must be switched somewhere in the motherboard.
 
-Measured cable lengths today:
-Fan 1 30cm
-Fan 2 26cm
-Fan 3 45cm
-Fan 4 40cm
-Fan 5 35cm
-Fan 6 40cm
+Cable lengths:
+- Fan 1 30cm
+- Fan 2 26cm
+- Fan 3 45cm
+- Fan 4 40cm
+- Fan 5 35cm
+- Fan 6 40cm
 
 Max length shrink tubing at the arduino end: 1-1.5cm
-Had another issue where my cables came apart (there are two spliced to one using electrical tape - need to do much better joins, but this allows me to correct the lengths of the cables more too.
 
-# Sun Jul 30 2022
+# July 2022 Update
 I've been testing this during summer and noticed that as the inlet temperature approaches the limit "for this configuration" the fans ramp significantly.  This is clearly a preventative reaction rather than a reactive one.  Also ensuring that the hardware that is in the server is "compatilbe" aka listed on the compatabilty matrix certainly helps to reduce the speed of the fans.
 
 
@@ -254,19 +121,19 @@ Do the dual power lead crimp first (it's the hardest)
 It would be much safer to map the fan speed returned to idrac from the detected speed of the fan, not the requested rpm. That way if a fan fails, then idrac will throw a fault.
 
 # Resources:
-Starting point: https://www.youtube.com/watch?v=UJK2JF8wOu8
-Replacement Fan: https://www.itcreations.com/product/119156
-Standard 4 pin fan pinout https://allpinouts.org/pinouts/connectors/motherboards/motherboard-cpu-4-pin-fan/
-https://pastebin.com/s49SWw1A
-https://github.com/Max-Sum/HP-fan-proxy/blob/master/hp_fan.ino
-https://www.avdweb.nl/arduino/misc/handy-functions
-https://www.reddit.com/r/homelab/comments/8wbogx/my_attempt_at_creating_a_circuit_board_that/
-https://www.reddit.com/r/homelab/comments/beuks5/silencing_the_hp_dl380_for_good/
+- Starting point: https://www.youtube.com/watch?v=UJK2JF8wOu8
+- Replacement Fan: https://www.itcreations.com/product/119156
+- Standard 4 pin fan pinout https://allpinouts.org/pinouts/connectors/motherboards/motherboard-cpu-4-pin-fan/
+- https://pastebin.com/s49SWw1A
+- https://github.com/Max-Sum/HP-fan-proxy/blob/master/hp_fan.ino
+- https://www.avdweb.nl/arduino/misc/handy-functions
+- https://www.reddit.com/r/homelab/comments/8wbogx/my_attempt_at_creating_a_circuit_board_that/
+- https://www.reddit.com/r/homelab/comments/beuks5/silencing_the_hp_dl380_for_good/
 
-Setting the interrupt priority: https://www.youtube.com/watch?v=H3o08WE0zEI
-Delta Fan Datasheet for similar fan: https://www.mouser.com/datasheet/2/632/dele_s_a0011169984_1-2290125.pdf
-https://homeservershow.com/forums/topic/7294-faking-the-fan-signal/
+- Setting the interrupt priority: https://www.youtube.com/watch?v=H3o08WE0zEI
+- Delta Fan Datasheet for similar fan: https://www.mouser.com/datasheet/2/632/dele_s_a0011169984_1-2290125.pdf
+- https://homeservershow.com/forums/topic/7294-faking-the-fan-signal/
 
-https://forum.arduino.cc/t/problem-measuring-4-pin-fan-rpm/666804/6
-http://www.benripley.com/diy/arduino/three-ways-to-read-a-pwm-signal-with-arduino/
-https://www.youtube.com/watch?v=nut1ZiiXzVU&t=143s
+- https://forum.arduino.cc/t/problem-measuring-4-pin-fan-rpm/666804/6
+- http://www.benripley.com/diy/arduino/three-ways-to-read-a-pwm-signal-with-arduino/
+- https://www.youtube.com/watch?v=nut1ZiiXzVU&t=143s
