@@ -104,6 +104,8 @@ Max length shrink tubing at the arduino end: 1-1.5cm
 # July 2022 Update
 I've been testing this during summer and noticed that as the inlet temperature approaches the limit "for this configuration" the fans ramp significantly.  This is clearly a preventative reaction rather than a reactive one.  Also ensuring that the hardware that is in the server is "compatilbe" aka listed on the compatabilty matrix certainly helps to reduce the speed of the fans.
 
+# May 2024 Update
+Have been running my server 24/7 for two years now with no ill effects.  No hardware failures, and just less noise.  It's not perfect and fans seem to surge slightly vs stay flat consistently.  It's not too big of an issue and could probably be adjusted by increasing the time the fans are averaged. Very happy with how this project is running.
 
 # Making cable tips.
 Put some shrink tubing on the 12v wire on the loop and the main wire before putting the terminal into the block. Stray 12v is SUPER bad.
@@ -119,6 +121,24 @@ Do the dual power lead crimp first (it's the hardest)
 
 # Possible improvements
 It would be much safer to map the fan speed returned to idrac from the detected speed of the fan, not the requested rpm. That way if a fan fails, then idrac will throw a fault.
+
+# Compatability
+## Compatible Dell Servers
+- R7515 (tested)
+- R540 (untested)
+- R7415 (untested)
+
+## Incompatible Dell Servers
+- R740 / R740XD
+- R840
+- R7615
+- R550
+- (anything where the fan plugs directly into the motherboard)
+
+## Unsure
+- R240 (unsure if can fit)
+- R340 (unsure if can fit)
+- R640 (unsure if can fit)
 
 # Resources:
 - Starting point: https://www.youtube.com/watch?v=UJK2JF8wOu8
